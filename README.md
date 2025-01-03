@@ -65,6 +65,7 @@ Web-интерфейс для использования сервиса
 - ❗️Деплой: Docker, NGINX
 - CI/CD: Github Actions
 - Документация: Swagger
+- Логирование: Pino + logtail
 - ❗️Дебаггинг: Sentry
 - ❗️Тестирование: Jest
 ### Дополнительно
