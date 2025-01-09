@@ -60,7 +60,7 @@ Web-интерфейс для использования сервиса
 - БД: MySQL + TypeORM
 - Хранилище файлов: MinIO
 - ❗️Очереди задач: Redis + BullMQ
-- ❗️Деплой: Docker, NGINX
+- ❗️Деплой: Docker + NGINX + PM2
 - CI/CD: Github Actions
 - Документация: Swagger
 - Логирование: Pino + logtail
