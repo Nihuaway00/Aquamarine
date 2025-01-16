@@ -25,11 +25,11 @@ jobs:
 
     - name: Copy files to server
       run: |
-        scp -r . root@154.194.53.158:/projects/Aquamarine
+        scp -r . root@154.194.53.158:~/projects/Aquamarine
     - name: Restart Docker Compose
       run: |
         ssh root@154.194.53.158 "
-          cd /projects/Aquamarine &&
+          cd ~/projects/Aquamarine &&
           docker-compose down &&
           docker-compose up -d
         "
