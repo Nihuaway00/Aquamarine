@@ -15,7 +15,7 @@ services:
       - MYSQL_PORT=3306
       - RABBITMQ_URL=amqp://rabbitmq-queue:5672
       - RABBITMQ_QUEUE=tasks
-      - LOGTAIL_TOKEN=dU1Z8hYSmMbVPJQamFpee7ma
+      - LOGTAIL_TOKEN=${PRODUCER_LOGTAIL_TOKEN}
     hostname: web-producer
     depends_on:
       - mysql
@@ -27,19 +27,19 @@ services:
       - MYSQL_PORT=3306
       - RABBITMQ_URL=amqp://rabbitmq-queue:5672
       - RABBITMQ_QUEUE=tasks
-      - LOGTAIL_TOKEN=XGSAPjfN1PM4rBj7JAQ7fPm8
+      - LOGTAIL_TOKEN=${EXECUTOR_LOGTAIL_TOKEN}
     deploy:
       replicas: 2
     depends_on:
       - web-producer
-  mysql:
-    image: mysql:latest
-    container_name: mysql-database
-    environment:
-      MYSQL_DATABASE: 'nestjs'
-      MYSQL_ROOT_PASSWORD: 'root'
-    ports:
-      - 3306:3306
+#  mysql:
+#    image: mysql:latest
+#    container_name: mysql-database
+#    environment:
+#      MYSQL_DATABASE: 'nestjs'
+#      MYSQL_ROOT_PASSWORD: 'root'
+#    ports:
+#      - 3306:3306
   rabbitmq:
     image: rabbitmq:3.13.3
     container_name: rabbitmq-queue
