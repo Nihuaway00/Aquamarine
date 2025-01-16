@@ -20,15 +20,16 @@ jobs:
 
     - name: Add server to known_hosts
       run: |
-        echo "${{ secrets.KNOWN_HOSTS }}" >> ~/.ssh/known_hosts
+        mkdir -p ~/.ssh
+        ssh-keyscan -H 154.194.53.158 >> ~/.ssh/known_hosts  # Получаем и добавляем ключ сервера
 
     - name: Copy files to server
       run: |
-        scp -r . root@154.194.53.158:/projects/Aquamarine
+        scp -r . root@154.194.53.158:~/projects/Aquamarine
     - name: Restart Docker Compose
       run: |
         ssh root@154.194.53.158 "
-          cd /projects/Aquamarine &&
+          cd ~/projects/Aquamarine/src &&
           docker-compose down &&
           docker-compose up -d
         "
