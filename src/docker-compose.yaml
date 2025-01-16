@@ -15,6 +15,7 @@ services:
       - MYSQL_PORT=3306
       - RABBITMQ_URL=amqp://rabbitmq-queue:5672
       - RABBITMQ_QUEUE=tasks
+      - LOGTAIL_TOKEN=dU1Z8hYSmMbVPJQamFpee7ma
     hostname: web-producer
     depends_on:
       - mysql
@@ -26,6 +27,7 @@ services:
       - MYSQL_PORT=3306
       - RABBITMQ_URL=amqp://rabbitmq-queue:5672
       - RABBITMQ_QUEUE=tasks
+      - LOGTAIL_TOKEN=XGSAPjfN1PM4rBj7JAQ7fPm8
     deploy:
       replicas: 2
     depends_on:
