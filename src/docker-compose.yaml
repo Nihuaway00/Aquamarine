@@ -18,7 +18,6 @@ services:
       - LOGTAIL_TOKEN=${PRODUCER_LOGTAIL_TOKEN}
     hostname: web-producer
     depends_on:
-      - mysql
       - rabbitmq
   web-executor:
     build: ./backend/executor
