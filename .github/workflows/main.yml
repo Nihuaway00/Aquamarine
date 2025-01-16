@@ -25,13 +25,21 @@ jobs:
 
     - name: Copy files to server
       run: |
-        # Убедитесь, что копируете только необходимые файлы (например, из директории с Dockerfile)
         scp -r . root@154.194.53.158:~/projects/Aquamarine
 
     - name: Restart Docker Compose
       run: |
         ssh root@154.194.53.158 "
           cd ~/projects/Aquamarine/src &&
+          export PRODUCER_LOGTAIL_TOKEN=${{ secrets.PRODUCER_LOGTAIL_TOKEN }} &&
+          export EXECUTOR_LOGTAIL_TOKEN=${{ secrets.EXECUTOR_LOGTAIL_TOKEN }} &&
           docker-compose down &&
-          docker-compose up -d --build  # Пересборка образов
+          docker-compose up -d --build  # Пересборка образов с новыми секретами
+        "
+
+    - name: Clean up unused Docker images
+      run: |
+        ssh root@154.194.53.158 "
+          cd ~/projects/Aquamarine/src &&
+          docker system prune -f --volumes  # Очищает неиспользуемые образы, контейнеры и тома
         "
