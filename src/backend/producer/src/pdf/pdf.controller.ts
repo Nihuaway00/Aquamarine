@@ -1,6 +1,7 @@
 import {
 	Body,
 	Controller,
+	Get,
 	HttpCode,
 	HttpStatus,
 	Inject,
@@ -85,5 +86,10 @@ export class PdfController {
 		const q = await firstValueFrom(this.executor.send('pdf/split', data));
 
 		return q;
+	}
+
+	@Get()
+	async timur() {
+		return 'У тимура фимоз';
 	}
 }
