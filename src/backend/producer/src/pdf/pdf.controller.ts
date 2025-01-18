@@ -87,9 +87,4 @@ export class PdfController {
 
 		return q;
 	}
-
-	@Get()
-	async timur() {
-		return 'У тимура фимоз';
-	}
 }
