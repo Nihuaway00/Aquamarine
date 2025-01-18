@@ -1,7 +1,20 @@
+networks:
+  backend:
+    driver: bridge
+  frontend:
+    driver: bridge
+
+volumes:
+  minio_data:
+    driver: local
+
 services:
   nginx:
     build: ./nginx
     container_name: nginx
+    networks:
+      - backend
+      - frontend
     ports:
       - '80:80'
     depends_on:
@@ -20,6 +33,10 @@ services:
     hostname: web-producer
     depends_on:
       - rabbitmq
+    networks:
+      - backend
+
+
   web-executor:
     build: ./backend/executor
     environment:
@@ -28,21 +45,46 @@ services:
       - RABBITMQ_URL=amqp://rabbitmq-queue:5672
       - RABBITMQ_QUEUE=tasks
       - LOGTAIL_TOKEN=${EXECUTOR_LOGTAIL_TOKEN}
+      - MINIO_SERVER_ACCESS_KEY=${MINIO_SERVER_ACCESS_KEY}
+      - MINIO_SERVER_SECRET_KEY=${MINIO_SERVER_SECRET_KEY}
+      - MINIO_SERVER_HOST=minio-filestorage:9000
     deploy:
       replicas: 2
     depends_on:
       - web-producer
-#  mysql:
-#    image: mysql:latest
-#    container_name: mysql-database
-#    environment:
-#      MYSQL_DATABASE: 'nestjs'
-#      MYSQL_ROOT_PASSWORD: 'root'
-#    ports:
-#      - 3306:3306
+    networks:
+      - backend
+
+
+  mysql:
+    image: mysql:latest
+    container_name: mysql-database
+    environment:
+      - MYSQL_DATABASE=nestjs
+      - MYSQL_ROOT_PASSWORD=root
+    ports:
+      - 3306:3306
+    networks:
+      - backend
+
+
   rabbitmq:
     image: rabbitmq:3.13.3
     container_name: rabbitmq-queue
     ports:
       - 5672:5672
       - 15672:15672
+    networks:
+      - backend
+
+
+  minio:
+    image: bitnami/minio:latest
+    ports:
+      - 9000:9000
+      - 9001:9001
+    container_name: minio-filestorage
+    volumes:
+      - 'minio_data:/bitnami/minio/data'
+    networks:
+      - backend
