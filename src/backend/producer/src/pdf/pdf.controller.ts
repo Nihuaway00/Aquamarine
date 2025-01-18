@@ -19,7 +19,6 @@ import { ClientProxy } from '@nestjs/microservices';
 import { Readable } from 'stream';
 import { firstValueFrom } from 'rxjs';
 import { RemovePagesDto } from './dto/removePages.dto';
-import { SplitDocumentDto } from './dto/splitDocument.dto';
 
 @Controller('pdf')
 export class PdfController {

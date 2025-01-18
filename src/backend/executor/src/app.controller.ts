@@ -1,16 +1,24 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Inject } from '@nestjs/common';
 import { AppService } from './app.service';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { RemovePagesDto } from './dto/removePages.dto';
-import { SplitDocumentDto } from './dto/splitDocument.dto';
+import { MINIO_CONNECTION } from 'nestjs-minio';
+import { Client } from 'minio';
+import { Readable } from 'stream';
+import { MinioService } from './minio/minio.service';
 
 @Controller()
 export class AppController {
-	constructor(private readonly appService: AppService) {}
+	constructor(private readonly appService: AppService, private readonly minioService: MinioService) {
+	}
 
 	@MessagePattern('pdf/page/remove')
 	async removePages(@Payload() data: RemovePagesDto) {
-		return this.appService.removePages(Buffer.from(data.bytes), data.pagesToRemove);
+		const buffer = await this.appService.removePages(Buffer.from(data.bytes), data.pagesToRemove);
+		await this.minioService.uploadStream('test','i.pdf',buffer);
+
+		return buffer;
+
 	}
 
 	// @MessagePattern('pdf/split')
