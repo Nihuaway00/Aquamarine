@@ -2,7 +2,7 @@ import {useEffect, useRef} from 'react';
 import * as pdfjs from "pdfjs-dist";
 
 // Настройка пути к воркеру PDF.js
-pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.17.0/pdf.worker.min.js`;
+pdfjs.GlobalWorkerOptions.workerSrc = "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/+esm";
 
 const PDFViewer = ({pdfBuffer}) => {
     const canvasRef = useRef(null);

@@ -3,7 +3,7 @@ import {API_REMOVE_PAGE_URL} from "./consts.js";
 
 
 
-export const removePages = async (file, pagesToRemove) => {
+export const removePages = async ({file, pagesToRemove}) => {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('pagesToRemove', JSON.stringify(pagesToRemove));
