@@ -13,8 +13,8 @@ export class AppController {
 		return this.appService.removePages(Buffer.from(data.bytes), data.pagesToRemove);
 	}
 
-	@MessagePattern('pdf/split')
-	async split(@Payload() data: SplitDocumentDto) {
-		return this.appService.splitDocument(Buffer.from(data.bytes), data.slices);
-	}
+	// @MessagePattern('pdf/split')
+	// async split(@Payload() data: SplitDocumentDto) {
+	// 	return this.appService.splitDocument(Buffer.from(data.bytes), data.slices);
+	// }
 }

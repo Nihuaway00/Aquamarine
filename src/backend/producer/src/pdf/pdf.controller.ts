@@ -64,31 +64,31 @@ export class PdfController {
 		readableStream.pipe(res);
 	}
 
-	@Post('split')
-	@UseInterceptors(FileInterceptor('file'))
-	@HttpCode(HttpStatus.OK)
-	async splitDocument(
-		@Query('slices') slices: string,
-		@UploadedFile(
-			new ParseFilePipeBuilder()
-				.addFileTypeValidator({
-					fileType: 'application/pdf',
-				})
-				.build({
-					fileIsRequired: true,
-				}),
-		)
-		file?: Express.Multer.File,
-	) {
-		const data = new SplitDocumentDto();
-		data.slices = slices
-			.split(',')
-			.map((x) => parseInt(x))
-			.filter((x) => x > 0);
-
-		data.bytes = file.buffer;
-		const q = await firstValueFrom(this.executor.send('pdf/split', data));
-
-		return q;
-	}
+	// @Post('split')
+	// @UseInterceptors(FileInterceptor('file'))
+	// @HttpCode(HttpStatus.OK)
+	// async splitDocument(
+	// 	@Query('slices') slices: string,
+	// 	@UploadedFile(
+	// 		new ParseFilePipeBuilder()
+	// 			.addFileTypeValidator({
+	// 				fileType: 'application/pdf',
+	// 			})
+	// 			.build({
+	// 				fileIsRequired: true,
+	// 			}),
+	// 	)
+	// 	file?: Express.Multer.File,
+	// ) {
+	// 	const data = new SplitDocumentDto();
+	// 	data.slices = slices
+	// 		.split(',')
+	// 		.map((x) => parseInt(x))
+	// 		.filter((x) => x > 0);
+	//
+	// 	data.bytes = file.buffer;
+	// 	const q = await firstValueFrom(this.executor.send('pdf/split', data));
+	//
+	// 	return q;
+	// }
 }
