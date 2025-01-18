@@ -57,6 +57,10 @@ export class PdfController {
 		const readableStream = new Readable();
 		readableStream.push(t);
 		readableStream.push(null);
+
+		res.setHeader('Content-Type', 'application/pdf');
+		res.setHeader('Content-Disposition', 'attachment; filename=removed.pdf');
+		res.setHeader('Content-Length', t.length);
 		readableStream.pipe(res);
 	}
 
