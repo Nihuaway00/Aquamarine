@@ -83,8 +83,6 @@ services:
   rabbitmq:
     image: rabbitmq:3.13.3
     container_name: rabbitmq-queue
-    environment:
-      - RABBITMQ_VM_MEMORY_HIGH_WATERMARK=0.3
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     ports:
