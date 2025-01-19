@@ -32,7 +32,7 @@ services:
       - CORS_ORIGIN=http://localhost:5173
     hostname: web-producer
     depends_on:
-      - rabbitmq
+      - web-executor
     networks:
       - backend
 
@@ -45,13 +45,14 @@ services:
       - RABBITMQ_URL=amqp://rabbitmq-queue:5672
       - RABBITMQ_QUEUE=tasks
       - LOGTAIL_TOKEN=${EXECUTOR_LOGTAIL_TOKEN}
-      - MINIO_SERVER_ACCESS_KEY=${MINIO_SERVER_ACCESS_KEY}
-      - MINIO_SERVER_SECRET_KEY=${MINIO_SERVER_SECRET_KEY}
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
       - MINIO_SERVER_HOST=minio-filestorage:9000
+      - MINIO_DEFAULT_BUCKETS=processed-files
     deploy:
       replicas: 2
     depends_on:
-      - web-producer
+      - rabbitmq
     networks:
       - backend
 
@@ -83,6 +84,11 @@ services:
     ports:
       - 9000:9000
       - 9001:9001
+    environment:
+      - MINIO_DEFAULT_BUCKETS=processed-files
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
+      - MINIO_SKIP_CLIENT=yes
     container_name: minio-filestorage
     volumes:
       - 'minio_data:/bitnami/minio/data'

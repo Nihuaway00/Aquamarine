@@ -15,7 +15,7 @@ export class AppController {
 	@MessagePattern('pdf/page/remove')
 	async removePages(@Payload() data: RemovePagesDto) {
 		const buffer = await this.appService.removePages(Buffer.from(data.bytes), data.pagesToRemove);
-		await this.minioService.uploadBuffer('test','i.pdf',buffer);
+		await this.minioService.uploadBuffer('.pdf',buffer);
 		return buffer;
 	}
 

@@ -33,6 +33,8 @@ jobs:
           cd ~/projects/Aquamarine/src &&
           export PRODUCER_LOGTAIL_TOKEN=${{ secrets.PRODUCER_LOGTAIL_TOKEN }} &&
           export EXECUTOR_LOGTAIL_TOKEN=${{ secrets.EXECUTOR_LOGTAIL_TOKEN }} &&
+          export MINIO_ROOT_USER=${{secrets.MINIO_ROOT_USER}} &&
+          export MINIO_ROOT_PASSWORD=${{secrets.MINIO_ROOT_PASSWORD}} &&
           docker-compose down &&
           docker-compose up -d --build  # Пересборка образов с новыми секретами
         "
