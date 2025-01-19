@@ -47,7 +47,7 @@ services:
       - LOGTAIL_TOKEN=${EXECUTOR_LOGTAIL_TOKEN}
       - MINIO_ROOT_USER=${MINIO_ROOT_USER}
       - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
-      - MINIO_SERVER_HOST=minio-filestorage:9000
+      - MINIO_SERVER_HOST=minio-filestorage
       - MINIO_DEFAULT_BUCKETS=processed-files
     deploy:
       replicas: 2

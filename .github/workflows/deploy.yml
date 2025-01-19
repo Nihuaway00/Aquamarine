@@ -25,7 +25,8 @@ jobs:
 
     - name: Copy files to server
       run: |
-        scp -r . root@154.194.53.158:~/projects/Aquamarine
+        # scp -r . root@154.194.53.158:~/projects/Aquamarine
+        rsync -avz --delete ./ root@154.194.53.158:~/projects/Aquamarine
 
     - name: Restart Docker Compose
       run: |
