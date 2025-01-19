@@ -7,6 +7,8 @@ networks:
 volumes:
   minio_data:
     driver: local
+  rabbitmq_data:
+    driver: local
 
 services:
   nginx:
@@ -72,8 +74,10 @@ services:
 
 
   rabbitmq:
-    image: rabbitmq:3.13.3
+    image: rabbitmq:3.13.3-alpine
     container_name: rabbitmq-queue
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
     ports:
       - 5672:5672
       - 15672:15672
@@ -81,7 +85,7 @@ services:
       - backend
     healthcheck:
       test: ["CMD", "rabbitmqctl", "status"]
-      interval: 5s
+      interval: 10s
       timeout: 5s
       retries: 10
       start_period: 10s
