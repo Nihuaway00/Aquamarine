@@ -45,6 +45,7 @@ export class PdfController {
 		file?: Express.Multer.File,
 	) {
 		const data = new RemovePagesDto();
+		data.filename = file.filename;
 		data.pagesToRemove = JSON.parse(body.pagesToRemove);
 		data.bytes = file.buffer;
 

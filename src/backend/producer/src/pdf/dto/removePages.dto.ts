@@ -1,4 +1,5 @@
-export class RemovePagesDto {
-	bytes: Uint8Array;
+import { FileDto } from './file.dto';
+
+export class RemovePagesDto extends FileDto {
 	pagesToRemove: number[];
 }
