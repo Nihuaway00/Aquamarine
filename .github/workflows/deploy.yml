@@ -52,12 +52,11 @@ jobs:
           export MINIO_ROOT_USER="${MINIO_ROOT_USER}"
           export MINIO_ROOT_PASSWORD="${MINIO_ROOT_PASSWORD}"
           
-          # docker-compose stop web-producer web-executor
-          docker-compose down
+          docker-compose stop web-producer web-executor
+          # docker-compose down
 
-          # docker-compose up -d --build web-producer web-executor
-          docker-compose up -d --build
+          docker-compose up -d --build web-producer web-executor
+          # docker-compose up -d --build
 
           docker image prune -f
-          ENDSSH
         
