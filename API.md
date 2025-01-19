@@ -1,7 +1,4 @@
 ## Endpoints
-
-### Загрузить файл
-#### **POST** `/file`
 ---
 ### Получить ссылку на скачивание
 #### **GET** `/file/link`
@@ -13,10 +10,10 @@
 #### **POST** `/pdf/split`
 ---
 ### Объединить pdf
-#### **POST** `/pdf/union`
+#### **POST** `/pdf/merge`
 ---
 ### сжать pdf
 #### **POST** `/pdf/compress`
 ---
 ### Удалить страницы pdf
-#### **POST** `/pdf/pages/remove`
+#### **POST** `/pdf/page/remove`
