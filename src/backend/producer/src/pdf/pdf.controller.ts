@@ -49,18 +49,19 @@ export class PdfController {
 		data.bytes = file.buffer;
 
 		const q = await firstValueFrom(this.executor.send('pdf/page/remove', data));
-		const o = Object.values(q);
+		return q;
+		// const o = Object.values(q);
 
-		const t = Uint8Array.from(o);
+		// const t = Uint8Array.from(o);
 		// Создание потока Readable
-		const readableStream = new Readable();
-		readableStream.push(t);
-		readableStream.push(null);
+		// const readableStream = new Readable();
+		// readableStream.push(t);
+		// readableStream.push(null);
 
-		res.setHeader('Content-Type', 'application/pdf');
-		res.setHeader('Content-Disposition', 'attachment; filename=removed.pdf');
-		res.setHeader('Content-Length', t.length);
-		readableStream.pipe(res);
+		// res.setHeader('Content-Type', 'application/pdf');
+		// res.setHeader('Content-Disposition', 'attachment; filename=removed.pdf');
+		// res.setHeader('Content-Length', t.length);
+		// readableStream.pipe(res);
 	}
 
 	// @Post('split')

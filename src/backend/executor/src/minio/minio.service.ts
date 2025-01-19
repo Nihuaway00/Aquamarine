@@ -7,8 +7,9 @@ import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class MinioService {
 	defaultBucket: string;
+
 	constructor(@Inject(MINIO_CONNECTION) private readonly minioClient: Client, private readonly configService: ConfigService) {
-		this.defaultBucket = configService.get("MINIO_DEFAULT_BUCKETS").split(',')[0];
+		this.defaultBucket = configService.get('MINIO_DEFAULT_BUCKETS').split(',')[0];
 	}
 
 	async uploadBuffer(filename: string, buffer: Uint8Array) {
@@ -20,5 +21,10 @@ export class MinioService {
 			filename,
 			bufferStream,
 		).catch(e => console.log(e));
+
+	}
+
+	async getDownloadUrl(filename: string) {
+		return await this.minioClient.presignedGetObject(this.defaultBucket, filename, 60 * 60);
 	}
 }
