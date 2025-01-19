@@ -82,8 +82,8 @@ services:
     healthcheck:
       test: ["CMD", "rabbitmqctl", "status"]
       interval: 5s
-      timeout: 2s
-      retries: 5
+      timeout: 5s
+      retries: 10
       start_period: 10s
 
   minio:
