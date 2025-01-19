@@ -3,7 +3,7 @@ name: Deploy to 'Timeweb' server
 on:
   push:
     branches:
-      - main  # Деплой запускается при пуше в main
+      - prod  # Деплой запускается при пуше в main
 
 jobs:
   deploy:
