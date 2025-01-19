@@ -38,6 +38,10 @@ services:
           condition: service_healthy
     networks:
       - backend
+    deploy:
+      resources:
+        limits:
+          memory: 100M
 
 
   web-executor:
@@ -54,6 +58,9 @@ services:
       - MINIO_DEFAULT_BUCKETS=processed-files
     deploy:
       replicas: 2
+      resources:
+        limits:
+          memory: 100M
     depends_on:
       rabbitmq:
           condition: service_healthy
@@ -61,34 +68,44 @@ services:
       - backend
 
 
-  mysql:
-    image: mysql:latest
-    container_name: mysql-database
-    environment:
-      - MYSQL_DATABASE=nestjs
-      - MYSQL_ROOT_PASSWORD=root
-    ports:
-      - 3306:3306
-    networks:
-      - backend
+  # mysql:
+  #   image: mysql:latest
+  #   container_name: mysql-database
+  #   environment:
+  #     - MYSQL_DATABASE=nestjs
+  #     - MYSQL_ROOT_PASSWORD=root
+  #   ports:
+  #     - 3306:3306
+  #   networks:
+  #     - backend
 
 
   rabbitmq:
     image: rabbitmq:3.13.3
     container_name: rabbitmq-queue
+    environment:
+      - RABBITMQ_VM_MEMORY_HIGH_WATERMARK=0.3
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     ports:
       - 5672:5672
       - 15672:15672
+    command: >
+      sh -c "rabbitmq-plugins enable rabbitmq_management &&  # Включает веб-интерфейс управления
+            echo 'vm_memory_high_watermark.relative = 0.3' > /etc/rabbitmq/conf.d/10-defaults.conf &&  # Записывает настройку памяти в конфиг
+            rabbitmq-server"  # Запускает сервер
     networks:
       - backend
     healthcheck:
       test: ["CMD", "rabbitmqctl", "status"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 10s
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s 
+    ulimits:  # Ограничения на уровне операционной системы
+      nofile:  # Максимальное количество открытых файловых дескрипторов
+        soft: 2048  # Мягкий лимит, который процесс может превысить временно
+        hard: 4096  # Жесткий лимит, который процесс не может превысить
 
   minio:
     image: bitnami/minio:latest
@@ -105,3 +122,7 @@ services:
       - 'minio_data:/bitnami/minio/data'
     networks:
       - backend
+    deploy:
+      resources:
+        limits:
+          memory: 200M

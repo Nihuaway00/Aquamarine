@@ -4,14 +4,14 @@ on:
   push:
     branches:
       - prod  # Деплой запускается при пуше в main
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 1  # Уменьшаем глубину клонирования
 
     - name: Set up SSH
       uses: webfactory/ssh-agent@v0.5.3
@@ -29,20 +29,35 @@ jobs:
         rsync -avz --delete ./ root@154.194.53.158:~/projects/Aquamarine
 
     - name: Restart Docker Compose
+      env: 
+        PRODUCER_LOGTAIL_TOKEN: ${{ secrets.PRODUCER_LOGTAIL_TOKEN }}
+        EXECUTOR_LOGTAIL_TOKEN: ${{ secrets.EXECUTOR_LOGTAIL_TOKEN }}
+        MINIO_ROOT_USER: ${{ secrets.MINIO_ROOT_USER }}
+        MINIO_ROOT_PASSWORD: ${{ secrets.MINIO_ROOT_PASSWORD }}  
       run: |
-        ssh root@154.194.53.158 "
-          cd ~/projects/Aquamarine/src &&
-          export PRODUCER_LOGTAIL_TOKEN=${{ secrets.PRODUCER_LOGTAIL_TOKEN }} &&
-          export EXECUTOR_LOGTAIL_TOKEN=${{ secrets.EXECUTOR_LOGTAIL_TOKEN }} &&
-          export MINIO_ROOT_USER=${{secrets.MINIO_ROOT_USER}} &&
-          export MINIO_ROOT_PASSWORD=${{secrets.MINIO_ROOT_PASSWORD}} &&
-          docker-compose down &&
-          docker-compose up -d --build  # Пересборка образов с новыми секретами
-        "
+        # ssh root@154.194.53.158 "
+        #   cd ~/projects/Aquamarine/src &&
+        #   export PRODUCER_LOGTAIL_TOKEN=${{ secrets.PRODUCER_LOGTAIL_TOKEN }} &&
+        #   export EXECUTOR_LOGTAIL_TOKEN=${{ secrets.EXECUTOR_LOGTAIL_TOKEN }} &&
+        #   export MINIO_ROOT_USER=${{secrets.MINIO_ROOT_USER}} &&
+        #   export MINIO_ROOT_PASSWORD=${{secrets.MINIO_ROOT_PASSWORD}} &&
+        #   docker-compose down &&
+        #   docker-compose up -d --build  # Пересборка образов с новыми секретами
+        # "
 
-    - name: Clean up unused Docker images
-      run: |
-        ssh root@154.194.53.158 "
-          cd ~/projects/Aquamarine/src &&
-          docker system prune -f --volumes  # Очищает неиспользуемые образы, контейнеры и тома
-        "
+        ssh root@154.194.53.158 << 'ENDSSH'
+          cd ~/projects/Aquamarine/src
+          export PRODUCER_LOGTAIL_TOKEN="${PRODUCER_LOGTAIL_TOKEN}"
+          export EXECUTOR_LOGTAIL_TOKEN="${EXECUTOR_LOGTAIL_TOKEN}"
+          export MINIO_ROOT_USER="${MINIO_ROOT_USER}"
+          export MINIO_ROOT_PASSWORD="${MINIO_ROOT_PASSWORD}"
+          
+          # docker-compose stop web-producer web-executor
+          docker-compose down
+
+          # docker-compose up -d --build web-producer web-executor
+          docker-compose up -d --build
+
+          docker image prune -f
+          ENDSSH
+        
