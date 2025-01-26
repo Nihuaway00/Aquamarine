@@ -49,7 +49,7 @@ jobs:
       run: |
         ssh root@154.194.53.158 '
           # Экспортируем переменные окружения в удаленную сессию
-          export SINK_URI="$SINK_URI"
+          export SINK_URI=fsmdkfjdks
 
           export MINIO_ROOT_USER="$MINIO_ROOT_USER"
           export MINIO_ROOT_PASSWORD="$MINIO_ROOT_PASSWORD"
