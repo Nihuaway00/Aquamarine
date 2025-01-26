@@ -9,8 +9,6 @@ volumes:
     driver: local
   rabbitmq_data:
     driver: local
-  logger_data:
-    driver: local
 
 services:
   nginx:
@@ -65,22 +63,8 @@ services:
           condition: service_healthy
       minio:
         condition: service_started
-
     networks:
       - backend
-
-
-  # mysql:
-  #   image: mysql:latest
-  #   container_name: mysql-database
-  #   environment:
-  #     - MYSQL_DATABASE=nestjs
-  #     - MYSQL_ROOT_PASSWORD=root
-  #   ports:
-  #     - 3306:3306
-  #   networks:
-  #     - backend
-
 
   rabbitmq:
     image: rabbitmq:3.13.3

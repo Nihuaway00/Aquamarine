@@ -45,6 +45,6 @@ jobs:
           printenv | grep RABBITMQ_DEFAULT_USER &&
           docker-compose down &&
           docker-compose up -d --build &&
-          docker system prune -f --volumes
+          docker system prune -f
         "
         

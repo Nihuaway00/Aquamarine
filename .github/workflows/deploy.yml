@@ -57,7 +57,7 @@ jobs:
           printenv | grep SINK_URI &&
           printenv | grep RABBITMQ_DEFAULT_USER &&
           docker-compose down &&
-          docker-compose up -d --build web-executor web-producer &&
-          docker system prune -f --volumes
+          docker-compose up -d --build web-executor web-producer nginx &&
+          docker system prune -f
         "
         
