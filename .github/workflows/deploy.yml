@@ -29,6 +29,17 @@ jobs:
         rsync -avz --delete ./ root@154.194.53.158:~/projects/Aquamarine
 
     - name: Restart Docker Compose
+      env:
+        MINIO_ROOT_USER: ${{vars.MINIO_ROOT_USER}}
+        MINIO_ROOT_PASSWORD: ${{vars.MINIO_ROOT_PASSWORD}}
+        SINK_URI: ${{vars.SINK_URI}}
+        PRODUCER_LOGGER_TOKEN: ${{secrets.PRODUCER_LOGGER_TOKEN}}
+        EXECUTOR_LOGGER_TOKEN: ${{secrets.EXECUTOR_LOGGER_TOKEN}}
+        RABBITMQ_LOGGER_TOKEN: ${{secrets.RABBITMQ_LOGGER_TOKEN}}
+        MINIO_LOGGER_TOKEN: ${{secrets.MINIO_LOGGER_TOKEN}}
+        NGINX_LOGGER_TOKEN: ${{secrets.NGINX_LOGGER_TOKEN}}
+        RABBITMQ_DEFAULT_USER: ${{ vars.RABBITMQ_DEFAULT_USER}}
+        RABBITMQ_DEFAULT_PASS: ${{vars.RABBITMQ_DEFAULT_PASS}}
       run: |
         ssh -o SendEnv=ALL root@154.194.53.158 << 'ENDSSH'
           cd ~/projects/Aquamarine/src
