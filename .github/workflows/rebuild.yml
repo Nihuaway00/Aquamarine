@@ -31,11 +31,6 @@ jobs:
       run: |
         ssh root@154.194.53.158 << 'ENDSSH'
           cd ~/projects/Aquamarine/src
-          export PRODUCER_LOGTAIL_TOKEN="${PRODUCER_LOGTAIL_TOKEN}"
-          export EXECUTOR_LOGTAIL_TOKEN="${EXECUTOR_LOGTAIL_TOKEN}"
-          export MINIO_ROOT_USER="${MINIO_ROOT_USER}"
-          export MINIO_ROOT_PASSWORD="${MINIO_ROOT_PASSWORD}"
-          
           docker-compose down
           docker-compose up -d --build
 
