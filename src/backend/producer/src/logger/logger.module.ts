@@ -1,27 +1,24 @@
 import { Module } from '@nestjs/common';
 import { LoggerModule as pinoLogger } from 'nestjs-pino/LoggerModule';
-import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
 	imports: [
 		pinoLogger.forRootAsync({
-			imports: [ConfigModule],
-			useFactory: (configService: ConfigService) => ({
+			useFactory: () => ({
 				pinoHttp: [
 					{
-						name: 'Aquamarine-producer',
+						name: 'producer',
 						level: 'debug',
 						transport: {
-							target: '@logtail/pino',
+							target: 'pino-pretty',
 							options: {
-								sourceToken: configService.get('LOGTAIL_TOKEN'),
+								colorize: true,
 							},
 						},
 					},
 					null,
 				],
 			}),
-			inject: [ConfigService],
 		}),
 	],
 })

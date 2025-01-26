@@ -24,13 +24,13 @@ services:
     depends_on:
       - web-producer
   web-producer:
-    container_name: nestjs-producer
+    container_name: web-producer
     build: ./backend/producer
     environment:
       - PORT=3000
       - MYSQL_HOST=mysql_database
       - MYSQL_PORT=3306
-      - RABBITMQ_URL=amqp://rabbitmq-queue:5672
+      - RABBITMQ_URL=amqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@rabbitmq-queue:5672
       - RABBITMQ_QUEUE=tasks
       - LOGTAIL_TOKEN=${PRODUCER_LOGTAIL_TOKEN}
       - CORS_ORIGIN=http://localhost:5173
@@ -50,7 +50,7 @@ services:
     environment:
       - MYSQL_HOST=mysql_database
       - MYSQL_PORT=3306
-      - RABBITMQ_URL=amqp://rabbitmq-queue
+      - RABBITMQ_URL=amqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@rabbitmq-queue:5672
       - RABBITMQ_QUEUE=tasks
       - LOGTAIL_TOKEN=${EXECUTOR_LOGTAIL_TOKEN}
       - MINIO_ROOT_USER=${MINIO_ROOT_USER}
@@ -58,7 +58,7 @@ services:
       - MINIO_SERVER_HOST=minio-filestorage
       - MINIO_DEFAULT_BUCKETS=processed-files
     deploy:
-      replicas: 2
+      replicas: 3
       resources:
         limits:
           memory: 100M
@@ -101,12 +101,15 @@ services:
     depends_on:
       logger:
         condition: service_healthy
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
     healthcheck:
       test: ["CMD", "rabbitmqctl", "status"]
       interval: 30s
       timeout: 10s
       retries: 5
-      start_period: 40s 
+      start_period: 30s 
     ulimits:  # Ограничения на уровне операционной системы
       nofile:  # Максимальное количество открытых файловых дескрипторов
         soft: 2048  # Мягкий лимит, который процесс может превысить временно

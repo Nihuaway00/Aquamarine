@@ -4,40 +4,40 @@ api:
 sources:
   docker:
     type: docker_logs
-    include_containers: 
-      - web-producer
-      - web-executor
-      - rabbitmq-queue
-      - minio-filestorage
-      - nginx
     exclude_containers:
       - logger
 
 transforms:
+  betterstack_transform:
+    type: remap
+    inputs:
+      - docker
+    source: |
+      .dt = del(.timestamp)
   producer_filter:
     type: filter
     inputs: 
-      - docker
+      - betterstack_transform
     condition: '.container_name == "web-producer"'
   executor_filter:
     type: filter
     inputs: 
-      - docker
-    condition: '.container_name == "web-executor"'
+      - betterstack_transform
+    condition: '.container_name == "src-web-executor-1"'
   rabbitmq_filter:
     type: filter
     inputs: 
-      - docker
+      - betterstack_transform
     condition: '.container_name == "rabbitmq-queue"'
   minio_filter:
     type: filter
     inputs: 
-      - docker
+      - betterstack_transform
     condition: '.container_name == "minio-filestorage"'
   nginx_filter:
     type: filter
     inputs: 
-      - docker
+      - betterstack_transform
     condition: '.container_name == "nginx"'
 
 sinks:
