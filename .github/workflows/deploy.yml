@@ -39,47 +39,25 @@ jobs:
       run: |
         # scp -r . root@154.194.53.158:~/projects/Aquamarine
         rsync -avz --delete ./ root@154.194.53.158:~/projects/Aquamarine
-    
-    - name: Check environment variables
-      run: |
-        echo "SINK_URI: $SINK_URI"
-        echo "PRODUCER_LOGGER_TOKEN: $PRODUCER_LOGGER_TOKEN" 
       
-    - name: Restart Docker Compose
+    - name: Restart only web-executor and web-producer
       run: |
-        ssh root@154.194.53.158 << 'ENDSSH'
-          # Экспортируем переменные окружения в удаленную сессию
-          export SINK_URI="${SINK_URI}"
-
-          export MINIO_ROOT_USER="${MINIO_ROOT_USER}"
-          export MINIO_ROOT_PASSWORD="${MINIO_ROOT_PASSWORD}"
-
-          export PRODUCER_LOGGER_TOKEN="${PRODUCER_LOGGER_TOKEN}"
-          export EXECUTOR_LOGGER_TOKEN="${EXECUTOR_LOGGER_TOKEN}"
-          export RABBITMQ_LOGGER_TOKEN="${RABBITMQ_LOGGER_TOKEN}"
-          export MINIO_LOGGER_TOKEN="${MINIO_LOGGER_TOKEN}"
-          export NGINX_LOGGER_TOKEN="${NGINX_LOGGER_TOKEN}"
-
-          export RABBITMQ_DEFAULT_USER="${RABBITMQ_DEFAULT_USER}"
-          export RABBITMQ_DEFAULT_PASS="${RABBITMQ_DEFAULT_PASS}"
-          
-          printenv | grep SINK_URI
-          printenv | grep RABBITMQ_DEFAULT_USER
-
-          cd ~/projects/Aquamarine/src       
-          docker-compose stop web-producer web-executor
-          docker-compose run \
-            -e SINK_URI="${SINK_URI}" \
-            -e MINIO_ROOT_USER="${MINIO_ROOT_USER}" \
-            -e MINIO_ROOT_PASSWORD="${MINIO_ROOT_PASSWORD}" \
-            -e PRODUCER_LOGGER_TOKEN="${PRODUCER_LOGGER_TOKEN}" \
-            -e EXECUTOR_LOGGER_TOKEN="${EXECUTOR_LOGGER_TOKEN}" \
-            -e RABBITMQ_LOGGER_TOKEN="${RABBITMQ_LOGGER_TOKEN}" \
-            -e MINIO_LOGGER_TOKEN="${MINIO_LOGGER_TOKEN}" \
-            -e NGINX_LOGGER_TOKEN="${NGINX_LOGGER_TOKEN}" \
-            -e RABBITMQ_DEFAULT_USER="${RABBITMQ_DEFAULT_USER}" \
-            -e RABBITMQ_DEFAULT_PASS="${RABBITMQ_DEFAULT_PASS}" \
-            --build -d web-producer web-executor
-        
-          docker image prune -f
+        ssh root@154.194.53.158 "
+          cd ~/projects/Aquamarine/src &&
+          export SINK_URI=${{vars.SINK_URI}}  &&
+          export MINIO_ROOT_USER=${{vars.MINIO_ROOT_USER}} &&
+          export MINIO_ROOT_PASSWORD=${{vars.MINIO_ROOT_PASSWORD}} &&
+          export PRODUCER_LOGGER_TOKEN=${{secrets.PRODUCER_LOGGER_TOKEN}} &&
+          export EXECUTOR_LOGGER_TOKEN=${{secrets.EXECUTOR_LOGGER_TOKEN}} &&
+          export RABBITMQ_LOGGER_TOKEN=${{secrets.RABBITMQ_LOGGER_TOKEN}} &&
+          export MINIO_LOGGER_TOKEN=${{secrets.MINIO_LOGGER_TOKEN}} &&
+          export NGINX_LOGGER_TOKEN=${{secrets.NGINX_LOGGER_TOKEN}} &&
+          export RABBITMQ_DEFAULT_USER=${{ vars.RABBITMQ_DEFAULT_USER}} &&
+          export RABBITMQ_DEFAULT_PASS=${{vars.RABBITMQ_DEFAULT_PASS}} &&
+          printenv | grep SINK_URI &&
+          printenv | grep RABBITMQ_DEFAULT_USER &&
+          docker-compose down &&
+          docker-compose up -d --build web-executor web-producer &&
+          docker system prune -f --volumes
+        "
         
