@@ -32,7 +32,6 @@ services:
       - MYSQL_PORT=3306
       - RABBITMQ_URL=amqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@rabbitmq-queue:5672
       - RABBITMQ_QUEUE=tasks
-      - LOGTAIL_TOKEN=${PRODUCER_LOGTAIL_TOKEN}
       - CORS_ORIGIN=http://localhost:5173
     hostname: web-producer
     depends_on:
@@ -52,7 +51,6 @@ services:
       - MYSQL_PORT=3306
       - RABBITMQ_URL=amqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@rabbitmq-queue:5672
       - RABBITMQ_QUEUE=tasks
-      - LOGTAIL_TOKEN=${EXECUTOR_LOGTAIL_TOKEN}
       - MINIO_ROOT_USER=${MINIO_ROOT_USER}
       - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
       - MINIO_SERVER_HOST=minio-filestorage
