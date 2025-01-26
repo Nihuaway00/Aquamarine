@@ -42,7 +42,7 @@ jobs:
       
     - name: Restart only web-executor and web-producer
       run: |
-        ssh root@154.194.53.158 "
+        ssh root@154.194.53.158 '
           cd ~/projects/Aquamarine/src &&
           export SINK_URI=${{vars.SINK_URI}}  &&
           export MINIO_ROOT_USER=${{vars.MINIO_ROOT_USER}} &&
@@ -58,6 +58,6 @@ jobs:
           printenv | grep RABBITMQ_DEFAULT_USER &&
           docker-compose down &&
           docker-compose up -d --build web-executor web-producer nginx &&
-          docker system prune -f
-        "
+          docker system prune -f --volumes --filter "until=48h"
+        '
         
