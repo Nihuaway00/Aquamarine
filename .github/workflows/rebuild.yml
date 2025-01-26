@@ -29,29 +29,22 @@ jobs:
 
     - name: Restart Docker Compose
       run: |
-        ssh root@154.194.53.158'
-          # Экспортируем переменные окружения в удаленную сессию
-          export SINK_URI=${{vars.SINK_URI}}
-
-          export MINIO_ROOT_USER=${{vars.MINIO_ROOT_USER}}
-          export MINIO_ROOT_PASSWORD=${{vars.MINIO_ROOT_PASSWORD}}
-          
-          export PRODUCER_LOGGER_TOKEN=${{secrets.PRODUCER_LOGGER_TOKEN}}
-          export EXECUTOR_LOGGER_TOKEN=${{secrets.EXECUTOR_LOGGER_TOKEN}}
-          export RABBITMQ_LOGGER_TOKEN=${{secrets.RABBITMQ_LOGGER_TOKEN}}
-          export MINIO_LOGGER_TOKEN=${{secrets.MINIO_LOGGER_TOKEN}}
-          export NGINX_LOGGER_TOKEN=${{secrets.NGINX_LOGGER_TOKEN}}
-
-          export RABBITMQ_DEFAULT_USER=${{ vars.RABBITMQ_DEFAULT_USER}}
-          export RABBITMQ_DEFAULT_PASS=${{vars.RABBITMQ_DEFAULT_PASS}}
-          
-          printenv | grep SINK_URI
-          printenv | grep RABBITMQ_DEFAULT_USER
-
-          cd ~/projects/Aquamarine/src
-          
-          docker-compose down
-          docker-compose up -d --build
-          docker image prune -f
-        '
+        ssh root@154.194.53.158 "
+          cd ~/projects/Aquamarine/src &&
+          export SINK_URI=${{vars.SINK_URI}}  &&
+          export MINIO_ROOT_USER=${{vars.MINIO_ROOT_USER}} &&
+          export MINIO_ROOT_PASSWORD=${{vars.MINIO_ROOT_PASSWORD}} &&
+          export PRODUCER_LOGGER_TOKEN=${{secrets.PRODUCER_LOGGER_TOKEN}} &&
+          export EXECUTOR_LOGGER_TOKEN=${{secrets.EXECUTOR_LOGGER_TOKEN}} &&
+          export RABBITMQ_LOGGER_TOKEN=${{secrets.RABBITMQ_LOGGER_TOKEN}} &&
+          export MINIO_LOGGER_TOKEN=${{secrets.MINIO_LOGGER_TOKEN}} &&
+          export NGINX_LOGGER_TOKEN=${{secrets.NGINX_LOGGER_TOKEN}} &&
+          export RABBITMQ_DEFAULT_USER=${{ vars.RABBITMQ_DEFAULT_USER}} &&
+          export RABBITMQ_DEFAULT_PASS=${{vars.RABBITMQ_DEFAULT_PASS}} &&
+          printenv | grep SINK_URI &&
+          printenv | grep RABBITMQ_DEFAULT_USER &&
+          docker-compose down &&
+          docker-compose up -d --build &&
+          docker image prune -f --volumes
+        "
         
