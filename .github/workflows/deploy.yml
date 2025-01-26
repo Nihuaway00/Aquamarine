@@ -46,6 +46,7 @@ jobs:
           export MINIO_ROOT_USER="${MINIO_ROOT_USER}"
           export MINIO_ROOT_PASSWORD="${MINIO_ROOT_PASSWORD}"
           export SINK_URI="${SINK_URI}"
+          echo $SINK_URI
           export PRODUCER_LOGGER_TOKEN="${PRODUCER_LOGGER_TOKEN}"
           export EXECUTOR_LOGGER_TOKEN="${EXECUTOR_LOGGER_TOKEN}"
           export RABBITMQ_LOGGER_TOKEN="${RABBITMQ_LOGGER_TOKEN}"
