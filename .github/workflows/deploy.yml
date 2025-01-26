@@ -35,16 +35,6 @@ jobs:
         MINIO_ROOT_USER: ${{ secrets.MINIO_ROOT_USER }}
         MINIO_ROOT_PASSWORD: ${{ secrets.MINIO_ROOT_PASSWORD }}  
       run: |
-        # ssh root@154.194.53.158 "
-        #   cd ~/projects/Aquamarine/src &&
-        #   export PRODUCER_LOGTAIL_TOKEN=${{ secrets.PRODUCER_LOGTAIL_TOKEN }} &&
-        #   export EXECUTOR_LOGTAIL_TOKEN=${{ secrets.EXECUTOR_LOGTAIL_TOKEN }} &&
-        #   export MINIO_ROOT_USER=${{secrets.MINIO_ROOT_USER}} &&
-        #   export MINIO_ROOT_PASSWORD=${{secrets.MINIO_ROOT_PASSWORD}} &&
-        #   docker-compose down &&
-        #   docker-compose up -d --build  # Пересборка образов с новыми секретами
-        # "
-
         ssh root@154.194.53.158 << 'ENDSSH'
           cd ~/projects/Aquamarine/src
           export PRODUCER_LOGTAIL_TOKEN="${PRODUCER_LOGTAIL_TOKEN}"
@@ -53,10 +43,8 @@ jobs:
           export MINIO_ROOT_PASSWORD="${MINIO_ROOT_PASSWORD}"
           
           docker-compose stop web-producer web-executor
-          # docker-compose down
 
           docker-compose up -d --build web-producer web-executor
-          # docker-compose up -d --build
 
           docker image prune -f
         
