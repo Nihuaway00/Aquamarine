@@ -1,11 +1,10 @@
 name: Deploy to 'Timeweb' server && rebuild all
 
 on:
-  push:
-    branches:
-      - prod  # Деплой запускается при пуше в main
+  workflow_dispatch:
+    
 jobs:
-  deploy:
+  rebuild:
     runs-on: ubuntu-latest
 
     steps:
