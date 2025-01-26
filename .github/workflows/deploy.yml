@@ -29,11 +29,6 @@ jobs:
         rsync -avz --delete ./ root@154.194.53.158:~/projects/Aquamarine
 
     - name: Restart Docker Compose
-      env: 
-        PRODUCER_LOGTAIL_TOKEN: ${{ secrets.PRODUCER_LOGTAIL_TOKEN }}
-        EXECUTOR_LOGTAIL_TOKEN: ${{ secrets.EXECUTOR_LOGTAIL_TOKEN }}
-        MINIO_ROOT_USER: ${{ secrets.MINIO_ROOT_USER }}
-        MINIO_ROOT_PASSWORD: ${{ secrets.MINIO_ROOT_PASSWORD }}  
       run: |
         ssh root@154.194.53.158 << 'ENDSSH'
           cd ~/projects/Aquamarine/src
