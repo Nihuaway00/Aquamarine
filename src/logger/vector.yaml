@@ -1,6 +1,3 @@
-api:
-  enabled: true
-
 sources:
   docker:
     type: docker_logs
