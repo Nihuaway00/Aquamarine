@@ -2,7 +2,7 @@ name: Deploy to 'Timeweb' server && rebuild all
 
 on:
   workflow_dispatch:
-
+    
 jobs:
   rebuild:
     runs-on: ubuntu-latest
@@ -27,10 +27,21 @@ jobs:
         # scp -r . root@154.194.53.158:~/projects/Aquamarine
         rsync -avz --delete ./ root@154.194.53.158:~/projects/Aquamarine
 
-    - name: Restart Docker Compose 
+    - name: Restart Docker Compose
       run: |
         ssh root@154.194.53.158 << 'ENDSSH'
           cd ~/projects/Aquamarine/src
+          export MINIO_ROOT_USER="${MINIO_ROOT_USER}"
+          export MINIO_ROOT_PASSWORD="${MINIO_ROOT_PASSWORD}"
+          export SINK_URI="${SINK_URI}"
+          export PRODUCER_LOGGER_TOKEN="${PRODUCER_LOGGER_TOKEN}"
+          export EXECUTOR_LOGGER_TOKEN="${EXECUTOR_LOGGER_TOKEN}"
+          export RABBITMQ_LOGGER_TOKEN="${RABBITMQ_LOGGER_TOKEN}"
+          export MINIO_LOGGER_TOKEN="${MINIO_LOGGER_TOKEN}"
+          export NGINX_LOGGER_TOKEN="${NGINX_LOGGER_TOKEN}"
+          export RABBITMQ_DEFAULT_USER="${RABBITMQ_DEFAULT_USER}"
+          export RABBITMQ_DEFAULT_PASS="${RABBITMQ_DEFAULT_PASS}"
+          
           docker-compose down
           docker-compose up -d --build
 
