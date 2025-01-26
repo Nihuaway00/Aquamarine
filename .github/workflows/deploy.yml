@@ -64,6 +64,7 @@ jobs:
           export RABBITMQ_DEFAULT_PASS="${RABBITMQ_DEFAULT_PASS}"
           
           printenv | grep SINK_URI
+          printenv | grep RABBITMQ_DEFAULT_USER
 
           cd ~/projects/Aquamarine/src       
           docker-compose stop web-producer web-executor
