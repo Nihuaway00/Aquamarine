@@ -1,9 +1,6 @@
 api:
   enabled: true
 
-log:
-  level: debug
-
 sources:
   docker:
     type: docker_logs
