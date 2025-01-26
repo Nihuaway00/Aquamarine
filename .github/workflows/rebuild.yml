@@ -3,19 +3,6 @@ name: Deploy to 'Timeweb' server && rebuild all
 on:
   workflow_dispatch:
 
-
-env:
-  MINIO_ROOT_USER: ${{vars.MINIO_ROOT_USER}}
-  MINIO_ROOT_PASSWORD: ${{vars.MINIO_ROOT_PASSWORD}}
-  SINK_URI: ${{vars.SINK_URI}}
-  PRODUCER_LOGGER_TOKEN: ${{secrets.PRODUCER_LOGGER_TOKEN}}
-  EXECUTOR_LOGGER_TOKEN: ${{secrets.EXECUTOR_LOGGER_TOKEN}}
-  RABBITMQ_LOGGER_TOKEN: ${{secrets.RABBITMQ_LOGGER_TOKEN}}
-  MINIO_LOGGER_TOKEN: ${{secrets.MINIO_LOGGER_TOKEN}}
-  NGINX_LOGGER_TOKEN: ${{secrets.NGINX_LOGGER_TOKEN}}
-  RABBITMQ_DEFAULT_USER: ${{ vars.RABBITMQ_DEFAULT_USER}}
-  RABBITMQ_DEFAULT_PASS: ${{vars.RABBITMQ_DEFAULT_PASS}}
-
 jobs:
   rebuild:
     runs-on: ubuntu-latest
@@ -40,28 +27,23 @@ jobs:
         # scp -r . root@154.194.53.158:~/projects/Aquamarine
         rsync -avz --delete ./ root@154.194.53.158:~/projects/Aquamarine
 
-    - name: Check environment variables
-      run: |
-        echo "SINK_URI: $SINK_URI"
-        echo "PRODUCER_LOGGER_TOKEN: $PRODUCER_LOGGER_TOKEN" 
-
     - name: Restart Docker Compose
       run: |
-        ssh root@154.194.53.158 -l -c'
+        ssh root@154.194.53.158'
           # Экспортируем переменные окружения в удаленную сессию
-          export SINK_URI=fsmdkfjdks
+          export SINK_URI=${{vars.SINK_URI}}
 
-          export MINIO_ROOT_USER="$MINIO_ROOT_USER"
-          export MINIO_ROOT_PASSWORD="$MINIO_ROOT_PASSWORD"
+          export MINIO_ROOT_USER=${{vars.MINIO_ROOT_USER}}
+          export MINIO_ROOT_PASSWORD=${{vars.MINIO_ROOT_PASSWORD}}
           
-          export PRODUCER_LOGGER_TOKEN="$PRODUCER_LOGGER_TOKEN"
-          export EXECUTOR_LOGGER_TOKEN="$EXECUTOR_LOGGER_TOKEN"
-          export RABBITMQ_LOGGER_TOKEN="$RABBITMQ_LOGGER_TOKEN"
-          export MINIO_LOGGER_TOKEN="$MINIO_LOGGER_TOKEN"
-          export NGINX_LOGGER_TOKEN="$NGINX_LOGGER_TOKEN"
+          export PRODUCER_LOGGER_TOKEN=${{secrets.PRODUCER_LOGGER_TOKEN}}
+          export EXECUTOR_LOGGER_TOKEN=${{secrets.EXECUTOR_LOGGER_TOKEN}}
+          export RABBITMQ_LOGGER_TOKEN=${{secrets.RABBITMQ_LOGGER_TOKEN}}
+          export MINIO_LOGGER_TOKEN=${{secrets.MINIO_LOGGER_TOKEN}}
+          export NGINX_LOGGER_TOKEN=${{secrets.NGINX_LOGGER_TOKEN}}
 
-          export RABBITMQ_DEFAULT_USER="$RABBITMQ_DEFAULT_USER"
-          export RABBITMQ_DEFAULT_PASS="$RABBITMQ_DEFAULT_PASS"
+          export RABBITMQ_DEFAULT_USER=${{ vars.RABBITMQ_DEFAULT_USER}}
+          export RABBITMQ_DEFAULT_PASS=${{vars.RABBITMQ_DEFAULT_PASS}}
           
           printenv | grep SINK_URI
           printenv | grep RABBITMQ_DEFAULT_USER
