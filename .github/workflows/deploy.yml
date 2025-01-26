@@ -48,6 +48,8 @@ jobs:
     - name: Restart Docker Compose
       run: |
         ssh root@154.194.53.158 << 'ENDSSH'
+          echo "SINK_URI: $SINK_URI"
+          echo "PRODUCER_LOGGER_TOKEN: $PRODUCER_LOGGER_TOKEN"
           cd ~/projects/Aquamarine/src       
           docker-compose stop web-producer web-executor
           docker-compose up -d --build web-producer web-executor
