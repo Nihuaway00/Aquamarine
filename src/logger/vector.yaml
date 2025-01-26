@@ -1,11 +1,14 @@
+api:
+  enabled: true
+
 sources:
   docker:
     type: docker_logs
     include_containers: 
       - web-producer
       - web-executor
-      - rabbitmq
-      - minio
+      - rabbitmq-queue
+      - minio-filestorage
       - nginx
     exclude_containers:
       - logger
@@ -13,24 +16,29 @@ sources:
 transforms:
   producer_filter:
     type: filter
-    inputs: docker
-    condition: '.docker.container_name == "web-producer"'
+    inputs: 
+      - docker
+    condition: '.container_name == "web-producer"'
   executor_filter:
     type: filter
-    inputs: docker
-    condition: '.docker.container_name == "web-executor"'
+    inputs: 
+      - docker
+    condition: '.container_name == "web-executor"'
   rabbitmq_filter:
     type: filter
-    inputs: docker
-    condition: '.docker.container_name == "rabbitmq"'
+    inputs: 
+      - docker
+    condition: '.container_name == "rabbitmq-queue"'
   minio_filter:
     type: filter
-    inputs: docker
-    condition: '.docker.container_name == "minio"'
+    inputs: 
+      - docker
+    condition: '.container_name == "minio-filestorage"'
   nginx_filter:
     type: filter
-    inputs: docker
-    condition: '.docker.container_name == "nginx"'
+    inputs: 
+      - docker
+    condition: '.container_name == "nginx"'
 
 sinks:
   producer_logs:

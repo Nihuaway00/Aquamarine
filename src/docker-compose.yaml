@@ -36,8 +36,7 @@ services:
       - CORS_ORIGIN=http://localhost:5173
     hostname: web-producer
     depends_on:
-      rabbitmq:
-          condition: service_healthy
+      - web-executor
     networks:
       - backend
     deploy:
@@ -66,6 +65,9 @@ services:
     depends_on:
       rabbitmq:
           condition: service_healthy
+      minio:
+        condition: service_started
+
     networks:
       - backend
 
@@ -96,6 +98,9 @@ services:
             rabbitmq-server"  # Запускает сервер
     networks:
       - backend
+    depends_on:
+      logger:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "rabbitmqctl", "status"]
       interval: 30s
@@ -122,6 +127,9 @@ services:
       - 'minio_data:/bitnami/minio/data'
     networks:
       - backend
+    depends_on:
+      logger:
+        condition: service_healthy
     deploy:
       resources:
         limits:
@@ -143,4 +151,12 @@ services:
       - NGINX_TOKEN=${NGINX_LOGGER_TOKEN}
     ports:
       - "8686:8686"
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD-SHELL", "vector", "health", "||", "exit", "1" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s 
 
