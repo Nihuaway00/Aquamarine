@@ -63,8 +63,22 @@ jobs:
           export RABBITMQ_DEFAULT_USER="${RABBITMQ_DEFAULT_USER}"
           export RABBITMQ_DEFAULT_PASS="${RABBITMQ_DEFAULT_PASS}"
           
+          printenv | grep SINK_URI
+
           cd ~/projects/Aquamarine/src       
           docker-compose stop web-producer web-executor
-          docker-compose up -d --build web-producer web-executor
+          docker-compose run \
+            -e SINK_URI="${SINK_URI}" \
+            -e MINIO_ROOT_USER="${MINIO_ROOT_USER}" \
+            -e MINIO_ROOT_PASSWORD="${MINIO_ROOT_PASSWORD}" \
+            -e PRODUCER_LOGGER_TOKEN="${PRODUCER_LOGGER_TOKEN}" \
+            -e EXECUTOR_LOGGER_TOKEN="${EXECUTOR_LOGGER_TOKEN}" \
+            -e RABBITMQ_LOGGER_TOKEN="${RABBITMQ_LOGGER_TOKEN}" \
+            -e MINIO_LOGGER_TOKEN="${MINIO_LOGGER_TOKEN}" \
+            -e NGINX_LOGGER_TOKEN="${NGINX_LOGGER_TOKEN}" \
+            -e RABBITMQ_DEFAULT_USER="${RABBITMQ_DEFAULT_USER}" \
+            -e RABBITMQ_DEFAULT_PASS="${RABBITMQ_DEFAULT_PASS}" \
+            --build -d web-producer web-executor
+        
           docker image prune -f
         
