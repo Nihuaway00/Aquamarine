@@ -1,4 +1,4 @@
-name: Deploy to 'Timeweb' server
+name: Deploy to 'Timeweb' server && rebuild all
 
 on:
   push:
