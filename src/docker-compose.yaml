@@ -58,7 +58,7 @@ services:
       - MINIO_SERVER_HOST=minio-filestorage
       - MINIO_DEFAULT_BUCKETS=processed-files
     deploy:
-      replicas: 3
+      replicas: 1
       resources:
         limits:
           memory: 100M
@@ -146,6 +146,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     restart: always
     environment:
+      - VECTOR_LOG=debug
       - SINK_URI=${SINK_URI}
       - PRODUCER_TOKEN=${PRODUCER_LOGGER_TOKEN}
       - EXECUTOR_TOKEN=${EXECUTOR_LOGGER_TOKEN}
