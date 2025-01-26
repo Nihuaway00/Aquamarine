@@ -1,0 +1,49 @@
+name: Deploy to 'Timeweb' server
+
+on:
+  push:
+    branches:
+      - prod  # Деплой запускается при пуше в main
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 1  # Уменьшаем глубину клонирования
+
+    - name: Set up SSH
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: ${{ secrets.TIMEWEB }}
+
+    - name: Add server to known_hosts
+      run: |
+        mkdir -p ~/.ssh
+        ssh-keyscan -H 154.194.53.158 >> ~/.ssh/known_hosts  # Получаем и добавляем ключ сервера
+
+    - name: Copy files to server
+      run: |
+        # scp -r . root@154.194.53.158:~/projects/Aquamarine
+        rsync -avz --delete ./ root@154.194.53.158:~/projects/Aquamarine
+
+    - name: Restart Docker Compose
+      env: 
+        PRODUCER_LOGTAIL_TOKEN: ${{ secrets.PRODUCER_LOGTAIL_TOKEN }}
+        EXECUTOR_LOGTAIL_TOKEN: ${{ secrets.EXECUTOR_LOGTAIL_TOKEN }}
+        MINIO_ROOT_USER: ${{ secrets.MINIO_ROOT_USER }}
+        MINIO_ROOT_PASSWORD: ${{ secrets.MINIO_ROOT_PASSWORD }}  
+      run: |
+        ssh root@154.194.53.158 << 'ENDSSH'
+          cd ~/projects/Aquamarine/src
+          export PRODUCER_LOGTAIL_TOKEN="${PRODUCER_LOGTAIL_TOKEN}"
+          export EXECUTOR_LOGTAIL_TOKEN="${EXECUTOR_LOGTAIL_TOKEN}"
+          export MINIO_ROOT_USER="${MINIO_ROOT_USER}"
+          export MINIO_ROOT_PASSWORD="${MINIO_ROOT_PASSWORD}"
+          
+          docker-compose down
+          docker-compose up -d --build
+
+          docker image prune -f
+        
