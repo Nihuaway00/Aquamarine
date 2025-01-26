@@ -47,7 +47,7 @@ jobs:
 
     - name: Restart Docker Compose
       run: |
-        ssh root@154.194.53.158 '
+        ssh root@154.194.53.158 -l -c'
           # Экспортируем переменные окружения в удаленную сессию
           export SINK_URI=fsmdkfjdks
 
