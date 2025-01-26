@@ -1,0 +1,85 @@
+sources:
+  docker:
+    type: docker_logs
+    include_containers: 
+      - web-producer
+      - web-executor
+      - rabbitmq
+      - minio
+      - nginx
+    exclude_containers:
+      - logger
+
+transforms:
+  producer_filter:
+    type: filter
+    inputs: docker
+    condition: '.docker.container_name == "web-producer"'
+  executor_filter:
+    type: filter
+    inputs: docker
+    condition: '.docker.container_name == "web-executor"'
+  rabbitmq_filter:
+    type: filter
+    inputs: docker
+    condition: '.docker.container_name == "rabbitmq"'
+  minio_filter:
+    type: filter
+    inputs: docker
+    condition: '.docker.container_name == "minio"'
+  nginx_filter:
+    type: filter
+    inputs: docker
+    condition: '.docker.container_name == "nginx"'
+
+sinks:
+  producer_logs:
+    type: http
+    inputs:
+      - producer_filter
+    uri: ${SINK_URI}
+    encoding:
+      codec: json
+    auth:
+      strategy: bearer
+      token: ${PRODUCER_TOKEN}
+  executor_logs:
+    type: http
+    inputs:
+      - executor_filter
+    uri: ${SINK_URI}
+    encoding:
+      codec: json
+    auth:
+      strategy: bearer
+      token: ${EXECUTOR_TOKEN}
+  rabbitmq_logs:
+    type: http
+    inputs:
+      - rabbitmq_filter
+    uri: ${SINK_URI}
+    encoding:
+      codec: json
+    auth:
+      strategy: bearer
+      token: ${RABBITMQ_TOKEN}
+  minio_logs:
+    type: http
+    inputs:
+      - minio_filter
+    uri: ${SINK_URI}
+    encoding:
+      codec: json
+    auth:
+      strategy: bearer
+      token: ${MINIO_TOKEN}
+  nginx_logs:
+    type: http
+    inputs:
+      - nginx_filter
+    uri: ${SINK_URI}
+    encoding:
+      codec: json
+    auth:
+      strategy: bearer
+      token: ${NGINX_TOKEN}

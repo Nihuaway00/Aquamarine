@@ -9,6 +9,8 @@ volumes:
     driver: local
   rabbitmq_data:
     driver: local
+  logger_data:
+    driver: local
 
 services:
   nginx:
@@ -124,3 +126,21 @@ services:
       resources:
         limits:
           memory: 200M
+
+  logger:
+    image: timberio/vector:nightly-alpine
+    container_name: logger
+    volumes:
+      - ./logger/vector.yaml:/etc/vector/vector.yaml:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: always
+    environment:
+      - SINK_URI=${SINK_URI}
+      - PRODUCER_TOKEN=${PRODUCER_LOGGER_TOKEN}
+      - EXECUTOR_TOKEN=${EXECUTOR_LOGGER_TOKEN}
+      - RABBITMQ_TOKEN=${RABBITMQ_LOGGER_TOKEN}
+      - MINIO_TOKEN=${MINIO_LOGGER_TOKEN}
+      - NGINX_TOKEN=${NGINX_LOGGER_TOKEN}
+    ports:
+      - "8686:8686"
+
