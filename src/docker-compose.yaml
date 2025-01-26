@@ -144,7 +144,6 @@ services:
     volumes:
       - ./logger/vector.yaml:/etc/vector/vector.yaml:ro
       - /var/run/docker.sock:/var/run/docker.sock
-    restart: always
     environment:
       - VECTOR_LOG=debug
       - SINK_URI=${SINK_URI}

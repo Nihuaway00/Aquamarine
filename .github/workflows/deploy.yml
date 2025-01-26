@@ -27,7 +27,12 @@ jobs:
       run: |
         # scp -r . root@154.194.53.158:~/projects/Aquamarine
         rsync -avz --delete ./ root@154.194.53.158:~/projects/Aquamarine
-
+    
+    - name: Check environment variables
+      run: |
+        echo "SINK_URI: $SINK_URI"
+        echo "PRODUCER_LOGGER_TOKEN: $PRODUCER_LOGGER_TOKEN" 
+      
     - name: Restart Docker Compose
       env:
         MINIO_ROOT_USER: ${{vars.MINIO_ROOT_USER}}
@@ -41,22 +46,9 @@ jobs:
         RABBITMQ_DEFAULT_USER: ${{ vars.RABBITMQ_DEFAULT_USER}}
         RABBITMQ_DEFAULT_PASS: ${{vars.RABBITMQ_DEFAULT_PASS}}
       run: |
-        ssh -o SendEnv=ALL root@154.194.53.158 << 'ENDSSH'
-          cd ~/projects/Aquamarine/src
-          export MINIO_ROOT_USER="${MINIO_ROOT_USER}"
-          export MINIO_ROOT_PASSWORD="${MINIO_ROOT_PASSWORD}"
-          export SINK_URI="${SINK_URI}"
-          echo $SINK_URI
-          export PRODUCER_LOGGER_TOKEN="${PRODUCER_LOGGER_TOKEN}"
-          export EXECUTOR_LOGGER_TOKEN="${EXECUTOR_LOGGER_TOKEN}"
-          export RABBITMQ_LOGGER_TOKEN="${RABBITMQ_LOGGER_TOKEN}"
-          export MINIO_LOGGER_TOKEN="${MINIO_LOGGER_TOKEN}"
-          export NGINX_LOGGER_TOKEN="${NGINX_LOGGER_TOKEN}"
-          export RABBITMQ_DEFAULT_USER="${RABBITMQ_DEFAULT_USER}"
-          export RABBITMQ_DEFAULT_PASS="${RABBITMQ_DEFAULT_PASS}"          
+        ssh root@154.194.53.158 << 'ENDSSH'
+          cd ~/projects/Aquamarine/src       
           docker-compose stop web-producer web-executor
-
           docker-compose up -d --build web-producer web-executor
-
           docker image prune -f
         
