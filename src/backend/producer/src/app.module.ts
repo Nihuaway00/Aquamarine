@@ -1,10 +1,22 @@
 import { Module } from '@nestjs/common';
 import { PdfModule } from './pdf/pdf.module';
 import { ConfigModule } from '@nestjs/config';
-import { LoggerModule } from './logger/logger.module';
+import { LoggerModule } from 'nestjs-pino';
 
 @Module({
-	imports: [ConfigModule.forRoot({ isGlobal: true }), LoggerModule, PdfModule],
+	imports: [
+		ConfigModule.forRoot({ isGlobal: true }),
+		LoggerModule.forRoot({
+			pinoHttp: [
+				{
+					name: 'producer',
+					level: 'debug',
+				},
+				null,
+			],
+		}),
+		PdfModule,
+	],
 	controllers: [],
 	providers: [],
 })

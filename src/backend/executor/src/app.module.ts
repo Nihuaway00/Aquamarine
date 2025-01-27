@@ -1,15 +1,23 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { LoggerModule } from './logger/logger.module';
+import { ConfigModule } from '@nestjs/config';
 import { MinioModule } from './minio/minio.module';
+import { LoggerModule } from 'nestjs-pino';
 
 @Module({
 	imports: [
 		ConfigModule.forRoot({ isGlobal: true }),
-		LoggerModule,
-		MinioModule
+		LoggerModule.forRoot({
+			pinoHttp: [
+				{
+					name: 'producer',
+					level: 'debug',
+				},
+				null,
+			],
+		}),
+		MinioModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],

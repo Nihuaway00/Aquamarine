@@ -14,15 +14,31 @@ transforms:
       - docker
     source: |
       .dt = del(.timestamp)
+
+  parse_nestjs:
+    type: remap
+    inputs:
+      - betterstack_transform
+    source: |
+      .parsed = parse_json(.message) ?? null
+      
+      if exists(.parsed) {
+        if exists(.parsed.msg) {
+          .message = .parsed.msg
+        }
+      }
+
+
+
   producer_filter:
     type: filter
     inputs: 
-      - betterstack_transform
+      - parse_nestjs
     condition: '.container_name == "web-producer"'
   executor_filter:
     type: filter
     inputs: 
-      - betterstack_transform
+      - parse_nestjs
     condition: '.container_name == "src-web-executor-1"'
   rabbitmq_filter:
     type: filter
