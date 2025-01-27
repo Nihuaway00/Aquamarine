@@ -1,27 +1,33 @@
-import { NestMinioModule } from 'nestjs-minio';
-import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { Global, Module } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import * as Minio from 'minio';
+import { MINIO_TOKEN } from '../decorators/minio.decorator';
 import { MinioService } from './minio.service';
 
+
+@Global()
 @Module({
-	imports: [
-		ConfigModule,
-		NestMinioModule.registerAsync(
-			{
-				imports: [ConfigModule],
-				inject: [ConfigService],
-				useFactory: (configService: ConfigService) => ({
-					isGlobal: true,
-					endPoint: configService.get('MINIO_SERVER_HOST'),
-					port: 9000,
+	exports: [MINIO_TOKEN, MinioService],
+	providers: [
+		{
+			inject: [ConfigService],
+			provide: MINIO_TOKEN,
+			useFactory: async (
+				configService: ConfigService,
+			): Promise<Minio.Client> => {
+				const client = new Minio.Client({
+					endPoint: configService.getOrThrow('MINIO_SERVER_HOST'),
+					port: +configService.getOrThrow('MINIO_PORT'),
+					accessKey: configService.getOrThrow('MINIO_ACCESS_KEY'),
+					secretKey: configService.getOrThrow('MINIO_SECRET_KEY'),
 					useSSL: false,
-					accessKey: configService.get('MINIO_ROOT_USER'),
-					secretKey: configService.get('MINIO_ROOT_PASSWORD'),
-				}),
-			}),
+					s3AccelerateEndpoint: 'true',
+				});
+				return client;
+			},
+		},
+		MinioService,
 	],
-	providers: [MinioService],
-	exports: [MinioService],
 })
 export class MinioModule {
 }

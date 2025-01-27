@@ -49,10 +49,11 @@ services:
       - MYSQL_PORT=3306
       - RABBITMQ_URL=amqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@rabbitmq-queue:5672
       - RABBITMQ_QUEUE=tasks
-      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
-      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
+      - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
+      - MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
       - MINIO_SERVER_HOST=minio-filestorage
       - MINIO_DEFAULT_BUCKETS=processed-files
+      - MINIO_PORT=9000
     deploy:
       replicas: 1
       resources:
@@ -99,10 +100,12 @@ services:
 
   minio:
     image: bitnami/minio:latest
+    init: true
     ports:
       - 9000:9000
       - 9001:9001
     environment:
+      - TZ=Europe/Moscow
       - MINIO_DEFAULT_BUCKETS=processed-files
       - MINIO_ROOT_USER=${MINIO_ROOT_USER}
       - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}

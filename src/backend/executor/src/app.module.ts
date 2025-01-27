@@ -11,7 +11,7 @@ import { LoggerModule } from 'nestjs-pino';
 		LoggerModule.forRoot({
 			pinoHttp: [
 				{
-					name: 'producer',
+					name: 'executor',
 					level: 'debug',
 				},
 				null,
