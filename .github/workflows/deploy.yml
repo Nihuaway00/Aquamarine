@@ -4,18 +4,6 @@ on:
   push:
     branches:
       - prod  # Деплой запускается при пуше в main
-
-env:
-  MINIO_ROOT_USER: ${{vars.MINIO_ROOT_USER}}
-  MINIO_ROOT_PASSWORD: ${{vars.MINIO_ROOT_PASSWORD}}
-  SINK_URI: ${{vars.SINK_URI}}
-  PRODUCER_LOGGER_TOKEN: ${{secrets.PRODUCER_LOGGER_TOKEN}}
-  EXECUTOR_LOGGER_TOKEN: ${{secrets.EXECUTOR_LOGGER_TOKEN}}
-  RABBITMQ_LOGGER_TOKEN: ${{secrets.RABBITMQ_LOGGER_TOKEN}}
-  MINIO_LOGGER_TOKEN: ${{secrets.MINIO_LOGGER_TOKEN}}
-  NGINX_LOGGER_TOKEN: ${{secrets.NGINX_LOGGER_TOKEN}}
-  RABBITMQ_DEFAULT_USER: ${{ vars.RABBITMQ_DEFAULT_USER}}
-  RABBITMQ_DEFAULT_PASS: ${{vars.RABBITMQ_DEFAULT_PASS}}
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -53,11 +41,12 @@ jobs:
           export MINIO_LOGGER_TOKEN=${{secrets.MINIO_LOGGER_TOKEN}} &&
           export NGINX_LOGGER_TOKEN=${{secrets.NGINX_LOGGER_TOKEN}} &&
           export RABBITMQ_DEFAULT_USER=${{ vars.RABBITMQ_DEFAULT_USER}} &&
-          export RABBITMQ_DEFAULT_PASS=${{vars.RABBITMQ_DEFAULT_PASS}} &&
+          export MINIO_ACCESS_KEY=${{secrets.MINIO_ACCESS_KEY}} &&
+          export MINIO_SECRET_KEY=${{secrets.MINIO_SECRET_KEY}} &&
           printenv | grep SINK_URI &&
           printenv | grep RABBITMQ_DEFAULT_USER &&
           docker-compose down &&
           docker-compose up -d --build web-executor web-producer nginx &&
-          docker system prune -f --volumes --filter "until=48h"
+          docker system prune -f --volumes
         '
         
