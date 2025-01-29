@@ -12,28 +12,34 @@ volumes:
 
 services:
   nginx:
-    build: ./nginx
+    image: nginx:latest
     container_name: nginx
+    volumes:
+      - ./nginx/default.conf.template:/etc/nginx/templates/default.conf.template:ro
+    environment:
+      - MINIO_HOST=filestorage
+      - MINIO_PORT=9000
+      - BACKEND_HOST=web-producer
+      - BACKEND_PORT=3000
     networks:
       - backend
       - frontend
     ports:
-      - '80:80'
-    depends_on:
-      - web-producer
+      - mode: host
+        protocol: tcp
+        published: 80
+        target: 80
+    depends_on: [web-producer]
   web-producer:
     container_name: web-producer
     build: ./backend/producer
     environment:
       - PORT=3000
-      - MYSQL_HOST=mysql_database
-      - MYSQL_PORT=3306
-      - RABBITMQ_URL=amqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@rabbitmq-queue:5672
+      - RABBITMQ_URL=amqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@queue:5672
       - RABBITMQ_QUEUE=tasks
       - CORS_ORIGIN=http://localhost:5173
     hostname: web-producer
-    depends_on:
-      - web-executor
+    depends_on: [web-executor]
     networks:
       - backend
     deploy:
@@ -45,13 +51,11 @@ services:
   web-executor:
     build: ./backend/executor
     environment:
-      - MYSQL_HOST=mysql_database
-      - MYSQL_PORT=3306
-      - RABBITMQ_URL=amqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@rabbitmq-queue:5672
+      - RABBITMQ_URL=amqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@queue:5672
       - RABBITMQ_QUEUE=tasks
       - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
       - MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
-      - MINIO_SERVER_HOST=minio-filestorage
+      - MINIO_SERVER_HOST=filestorage
       - MINIO_DEFAULT_BUCKETS=processed-files
       - MINIO_PORT=9000
     deploy:
@@ -68,17 +72,13 @@ services:
       - backend
 
   rabbitmq:
+    container_name: queue
     image: rabbitmq:3.13.3
-    container_name: rabbitmq-queue
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     ports:
       - 5672:5672
       - 15672:15672
-    command: >
-      sh -c "rabbitmq-plugins enable rabbitmq_management &&  # Включает веб-интерфейс управления
-            echo 'vm_memory_high_watermark.relative = 0.3' > /etc/rabbitmq/conf.d/10-defaults.conf &&  # Записывает настройку памяти в конфиг
-            rabbitmq-server"  # Запускает сервер
     networks:
       - backend
     depends_on:
@@ -94,11 +94,12 @@ services:
       retries: 5
       start_period: 30s 
     ulimits:  # Ограничения на уровне операционной системы
-      nofile:  # Максимальное количество открытых файловых дескрипторов
-        soft: 2048  # Мягкий лимит, который процесс может превысить временно
-        hard: 4096  # Жесткий лимит, который процесс не может превысить
+      nofile:
+        soft: 2048
+        hard: 4096
 
   minio:
+    container_name: filestorage
     image: bitnami/minio:latest
     init: true
     ports:
@@ -110,7 +111,6 @@ services:
       - MINIO_ROOT_USER=${MINIO_ROOT_USER}
       - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
       - MINIO_SKIP_CLIENT=yes
-    container_name: minio-filestorage
     volumes:
       - 'minio_data:/bitnami/minio/data'
     networks:
@@ -124,13 +124,12 @@ services:
           memory: 200M
 
   logger:
-    image: timberio/vector:nightly-alpine
     container_name: logger
+    image: timberio/vector:nightly-alpine
     volumes:
       - ./logger/vector.yaml:/etc/vector/vector.yaml:ro
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
-      - VECTOR_LOG=debug
       - SINK_URI=${SINK_URI}
       - PRODUCER_TOKEN=${PRODUCER_LOGGER_TOKEN}
       - EXECUTOR_TOKEN=${EXECUTOR_LOGGER_TOKEN}
