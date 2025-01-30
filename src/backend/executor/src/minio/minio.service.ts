@@ -30,7 +30,7 @@ export class MinioService {
 
 	}
 
-	async getDownloadUrl(filename: string) {
-		return await this.client.presignedUrl('GET', this.defaultBucket, filename);
+	async getDownloadUrl(filename: string, expires: number = 3600) {
+		return await this.client.presignedUrl('GET', this.defaultBucket, filename, expires);
 	}
 }

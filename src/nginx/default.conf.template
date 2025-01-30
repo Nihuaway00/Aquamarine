@@ -20,6 +20,8 @@ server {
 
   location /server {
     rewrite ^/server(.*) $1 break;
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-Proto $scheme;
     proxy_pass $backend_url;
   }
 

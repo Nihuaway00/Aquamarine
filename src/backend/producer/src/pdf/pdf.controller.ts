@@ -1,6 +1,7 @@
 import {
 	Body,
 	Controller,
+	Headers,
 	HttpCode,
 	HttpStatus,
 	Inject,
@@ -30,7 +31,8 @@ export class PdfController {
 	@UseInterceptors(FileInterceptor('file'))
 	@HttpCode(HttpStatus.OK)
 	async removePages(
-		// @Res() res,
+		@Headers('host') host: string,
+		@Headers('x-forwarded-proto') protocol: string,
 		@Body() body,
 		@UploadedFile(
 			new ParseFilePipeBuilder()
@@ -50,21 +52,11 @@ export class PdfController {
 		data.bytes = file.buffer;
 
 		this.logger.info('отправлена задача pdf/page/remove');
-		const q = await firstValueFrom(this.executor.send('pdf/page/remove', data));
-		this.logger.info(`получен ответ от executor: ${q}`);
-		return q;
-		// const o = Object.values(q);
-
-		// const t = Uint8Array.from(o);
-		// Создание потока Readable
-		// const readableStream = new Readable();
-		// readableStream.push(t);
-		// readableStream.push(null);
-
-		// res.setHeader('Content-Type', 'application/pdf');
-		// res.setHeader('Content-Disposition', 'attachment; filename=removed.pdf');
-		// res.setHeader('Content-Length', t.length);
-		// readableStream.pipe(res);
+		const presignedUrl = await firstValueFrom(
+			this.executor.send('pdf/page/remove', data),
+		);
+		this.logger.info(`получен ответ от executor: ${presignedUrl}`);
+		return `${protocol}://${host}/storage${presignedUrl}`;
 	}
 
 	// @Post('split')

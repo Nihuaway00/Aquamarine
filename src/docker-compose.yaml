@@ -29,7 +29,6 @@ services:
         protocol: tcp
         published: 80
         target: 80
-    depends_on: [web-producer]
   web-producer:
     container_name: web-producer
     build: ./backend/producer
