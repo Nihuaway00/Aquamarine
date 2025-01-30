@@ -1,0 +1,16 @@
+# Игнорируем зависимости и сборочные файлы
+node_modules
+dist
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.vscode
+.idea
+.DS_Store
+.env*
+*.local
+.cache
+.tmp
+coverage

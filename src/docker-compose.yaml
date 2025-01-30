@@ -19,8 +19,10 @@ services:
     environment:
       - MINIO_HOST=filestorage
       - MINIO_PORT=9000
-      - BACKEND_HOST=web-producer
-      - BACKEND_PORT=3000
+      - FRONTEND_HOST=app
+      - FRONTEND_PORT=3000
+      - BACKEND_HOST=backend
+      - BACKEND_PORT=3001
     networks:
       - backend
       - frontend
@@ -29,16 +31,31 @@ services:
         protocol: tcp
         published: 80
         target: 80
-  web-producer:
-    container_name: web-producer
+
+  app:
+    hostname: app
+    container_name: app
+    ports:
+      - 6000:3000
+    networks:
+      - frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=http://localhost/api
+
+  backend:
+    container_name: backend
+    hostname: backend
     build: ./backend/producer
+    ports:
+      - 5001:3001
     environment:
-      - PORT=3000
+      - PORT=3001
       - RABBITMQ_URL=amqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@queue:5672
       - RABBITMQ_QUEUE=tasks
-      - CORS_ORIGIN=http://localhost:5173
-    hostname: web-producer
-    depends_on: [web-executor]
+    depends_on: [backend-executor]
     networks:
       - backend
     deploy:
@@ -47,7 +64,7 @@ services:
           memory: 100M
 
 
-  web-executor:
+  backend-executor:
     build: ./backend/executor
     environment:
       - RABBITMQ_URL=amqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@queue:5672

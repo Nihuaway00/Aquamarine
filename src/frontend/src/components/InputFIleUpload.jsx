@@ -29,7 +29,6 @@ export default function InputFileUpload({onFileUploaded, disabled}) {
             <VisuallyHiddenInput
                 type="file"
                 onChange={e => onFileUploaded(e)}
-                multiple
             />
         </Button>
     );

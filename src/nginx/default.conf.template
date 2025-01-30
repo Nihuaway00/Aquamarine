@@ -14,14 +14,25 @@ server {
   proxy_buffering off;
   proxy_request_buffering off;
 
+  set $frontend_port ${FRONTEND_PORT};
+  set $frontend_host ${FRONTEND_HOST};
+  set $frontend_url http://$frontend_host:$frontend_port;
+
+  location / {
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_pass $frontend_url;
+  }
+
   set $backend_port ${BACKEND_PORT};
   set $backend_host ${BACKEND_HOST};
   set $backend_url http://$backend_host:$backend_port;
 
-  location /server {
-    rewrite ^/server(.*) $1 break;
+  location /api {
+    rewrite ^/api(.*) $1 break;
     proxy_set_header Host $host;
     proxy_set_header X-Forwarded-Proto $scheme;
+
     proxy_pass $backend_url;
   }
 
