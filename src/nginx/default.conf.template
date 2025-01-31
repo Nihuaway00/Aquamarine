@@ -23,6 +23,7 @@ server {
     proxy_set_header X-Forwarded-Proto $scheme;
     proxy_pass $frontend_url;
   }
+  
 
   set $backend_port ${BACKEND_PORT};
   set $backend_host ${BACKEND_HOST};

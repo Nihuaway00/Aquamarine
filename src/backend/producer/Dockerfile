@@ -8,5 +8,7 @@ COPY . .
 
 RUN npm run build
 
+EXPOSE 3001
+
 # Start app
 CMD ["node", "dist/main.js"]

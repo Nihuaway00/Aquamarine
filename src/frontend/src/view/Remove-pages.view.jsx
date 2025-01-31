@@ -1,10 +1,10 @@
 import * as React from 'react';
 import {useEffect, useState} from 'react';
-import {useMutation, useQueryClient} from "@tanstack/react-query";
-import {removePages} from "../requests.js";
+import {useMutation} from "@tanstack/react-query";
 import {Input, Stack, Typography} from "@mui/material";
 import InputFileUpload from "../components/InputFIleUpload.jsx";
 import Button from "@mui/material/Button";
+import {removePages} from "../requests.js";
 
 export default function RemovePagesView() {
     const [uploadedFile, setUploadedFile] = useState(null);
@@ -14,36 +14,25 @@ export default function RemovePagesView() {
     const [fileSending, setFileSending] = useState(false);
     const [sendingError, setSendingError] = useState(undefined);
 
-    const queryClient = useQueryClient()
 
     const mutation = useMutation({
         mutationFn: removePages,
-        onSuccess: () => {
-            // Invalidate and refetch
-            queryClient.invalidateQueries({queryKey: ['pdf']})
+        onSuccess: (data) => {
+            setFileSending(false);
+            console.log(data)
+            setDownloadLink(data.data)
         },
-    })
-
-    useEffect(() => {
-        if (mutation.isPending) {
-            setFileSending(true);
-        } else if (mutation.isError) {
+        onError: (error) => {
             setFileSending(false);
-            setSendingError(mutation.error);
-        } else if (mutation.isSuccess && mutation.data) {
-            setDownloadLink(mutation.data)
-            setFileSending(false);
-            setSendingError(undefined);
-        } else if (mutation.isSuccess && !mutation.data) {
-            setFileSending(false);
-            setSendingError('Unknown error')
+            setSendingError(error)
         }
-    }, [mutation.status])
+    })
 
     function handleUploadedFile(e) {
         let reader = new FileReader();
         reader.readAsArrayBuffer(uploadedFile);
         reader.onload = () => {
+            setFileSending(true);
             mutation.mutate({
                 file: uploadedFile,
                 pagesToRemove: [1]

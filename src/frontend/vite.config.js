@@ -8,4 +8,12 @@ export default defineConfig({
         outDir: 'dist',
         sourcemap: false,
     },
+    server: {
+        watch: {
+            usePolling: true,
+        },
+        strictPort: true, // not necessary
+        port: 3000, // you can replace this port with any port
+    },
+    host: true, // needed for the Docker Container port mapping to work
 })
