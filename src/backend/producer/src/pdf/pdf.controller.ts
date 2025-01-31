@@ -1,4 +1,5 @@
 import {
+	BadRequestException,
 	Body,
 	Controller,
 	Headers,
@@ -7,7 +8,6 @@ import {
 	Inject,
 	ParseFilePipeBuilder,
 	Post,
-	Res,
 	UploadedFile,
 	UseInterceptors,
 } from '@nestjs/common';
@@ -17,7 +17,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import { RemovePagesDto } from './dto/removePages.dto';
-import { PinoLogger, InjectPinoLogger } from 'nestjs-pino';
+import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 @Controller('pdf')
 export class PdfController {
@@ -46,9 +46,21 @@ export class PdfController {
 		file: Express.Multer.File,
 	) {
 		this.logger.info(`Загружен файл: ${file.originalname}`);
+
+		const regex = /^(\d+)(,\s*\d+)*$/;
+		const isValid =
+			regex.test(body.pagesToRemove) &&
+			body.pagesToRemove
+				.split(',')
+				.every((num) => parseInt(num) > 0 && Number.isInteger(parseFloat(num)));
+
+		if (!isValid)
+			throw new BadRequestException('Неверный формат страниц для удаления');
+
 		const data = new RemovePagesDto();
 		data.filename = file.originalname;
-		data.pagesToRemove = JSON.parse(body.pagesToRemove);
+
+		data.pagesToRemove = body.pagesToRemove.split(',');
 		data.bytes = file.buffer;
 
 		this.logger.info('отправлена задача pdf/page/remove');
