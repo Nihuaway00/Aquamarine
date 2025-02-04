@@ -51,7 +51,7 @@ jobs:
         # scp -r . root@154.194.53.158:~/projects/Aquamarine
         rsync -avz --delete ./ root@154.194.53.158:~/projects/Aquamarine
       
-    - name: Restart only web-executor and web-producer
+    - name: Restart containers
       run: |
         ssh root@154.194.53.158 '
           cd ~/projects/Aquamarine/src &&
