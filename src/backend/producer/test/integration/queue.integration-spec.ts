@@ -116,7 +116,7 @@ describe('PdfController', () => {
 
 		await pdfController.removePages(host, protocol, body, file);
 
-		return new Promise((resolve) => {
+		new Promise((resolve) => {
 			channel.consume(
 				QUEUE,
 				(message) => {
