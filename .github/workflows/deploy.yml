@@ -17,13 +17,13 @@ jobs:
 
     - name: TEST producer
       run: |
-        cd ~/src/backend/producer
+        cd ~/work/Aquamarine/Aquamarine/src/backend/producer
         npm ci
         npm test
 
     - name: TEST executor
       run: |
-        cd ~/src/backend/executor
+        cd ~/work/Aquamarine/Aquamarine/src/backend/executor
         npm ci
         npm test
   
