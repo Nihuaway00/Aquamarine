@@ -4,6 +4,6 @@ import {$api} from "./axios.mjs";
 export const removePages = async ({file, pagesToRemove}) => {
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('pagesToRemove', JSON.stringify(pagesToRemove));
+    formData.append('pagesToRemove', pagesToRemove);
     return $api.post(REMOVE_PAGE_URL, formData);
 }

@@ -41,7 +41,9 @@ export class PdfController {
 		)
 		file: Express.Multer.File,
 	) {
-		this.logger.info(`Загружен файл: ${file.originalname}`);
+		this.logger.info(
+			`Загружен файл: ${file.originalname}. Будут удалены страницы: ${body.pagesToRemove}`,
+		);
 
 		const parsed = body.pagesToRemove.split(',').map((num) => parseInt(num));
 		const isValid = parsed.every((num) => num > 0 && Number.isInteger(num));
@@ -49,7 +51,11 @@ export class PdfController {
 		if (!isValid)
 			throw new BadRequestException('Неверный формат страниц для удаления');
 
-		const url = this.service.removePage(file.originalname, file.buffer, parsed);
+		const url = await this.service.removePage(
+			file.originalname,
+			file.buffer,
+			parsed,
+		);
 		return `${protocol}://${host}/storage${url}`;
 	}
 }

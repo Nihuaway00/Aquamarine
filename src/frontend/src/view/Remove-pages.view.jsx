@@ -57,7 +57,7 @@ export default function RemovePagesView() {
         reader.onload = () => {
             mutation.mutate({
                 file: uploadedFile,
-                pagesToRemove: pagesToRemove.split(',').map(num => parseInt(num))
+                pagesToRemove
             })
         }
     }
@@ -73,7 +73,7 @@ export default function RemovePagesView() {
                                onChange={(e) => setPagesToRemove(e.target.value)} type="text"/>
                         {
                             downloadLink ? (
-                                <Button variant={'outlined'} href={downloadLink}>Скачать</Button>
+                                <Button variant={'outlined'} href={downloadLink} download>Скачать</Button>
 
                             ) : (
                                 <Button loading={fileSending} disabled={sendingError} onClick={sendFile}>Удалить
