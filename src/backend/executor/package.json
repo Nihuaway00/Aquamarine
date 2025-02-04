@@ -13,13 +13,16 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "test": "jest",
+    "test": "jest --config jest.all.config.json",
+    "test:unit": "jest --config ./test/jest.unit.config.json",
+    "test:integration": "jest --config test/integration/jest.integration.config.json",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@jest/globals": "^29.7.0",
     "@logtail/pino": "^0.5.2",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.3.0",

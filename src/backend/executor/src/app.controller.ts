@@ -11,8 +11,7 @@ import { ConfigService } from '@nestjs/config';
 export class AppController {
 	constructor(private readonly appService: AppService,
 							private readonly minioService: MinioService,
-							@InjectPinoLogger(AppController.name) private readonly logger: PinoLogger,
-							private readonly configService: ConfigService) {
+							@InjectPinoLogger(AppController.name) private readonly logger: PinoLogger) {
 	}
 
 	@MessagePattern('pdf/page/remove')

@@ -15,9 +15,15 @@ jobs:
       with:
         node-version: '22.10.0'
 
-    - name: test producer
+    - name: TEST producer
       run: |
-        cd ./src/backend/producer
+        cd ~/src/backend/producer
+        npm ci
+        npm test
+
+    - name: TEST executor
+      run: |
+        cd ~/src/backend/executor
         npm ci
         npm test
   
