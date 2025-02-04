@@ -5,6 +5,17 @@ on:
     branches:
       - prod  # Деплой запускается при пуше в main
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Use Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22.10.0'
+    - run: npm ci
+    - run: npm test
+
   deploy:
     runs-on: ubuntu-latest
 
