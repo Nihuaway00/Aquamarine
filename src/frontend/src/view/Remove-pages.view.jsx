@@ -35,7 +35,7 @@ export default function RemovePagesView() {
             setFileSending(true);
             mutation.mutate({
                 file: uploadedFile,
-                pagesToRemove: [1]
+                pagesToRemove: pagesToRemove
             })
         }
     }

@@ -45,7 +45,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        - VITE_API_URL=http://backend
+        - VITE_API_URL=/api
 
   backend:
     container_name: backend

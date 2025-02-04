@@ -17,7 +17,5 @@ import { LoggerModule } from 'nestjs-pino';
 		}),
 		PdfModule,
 	],
-	controllers: [],
-	providers: [],
 })
 export class AppModule {}

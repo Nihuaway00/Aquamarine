@@ -1,21 +1,32 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
+import { firstValueFrom } from 'rxjs';
+import { ClientProxy } from '@nestjs/microservices';
+import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
+import { RemovePagesDto } from './dto/remove-pages.dto';
 
 @Injectable()
 export class PdfService {
-	async removePage(buffer, pageToRemove: number) {
-		console.log(pageToRemove);
-		return buffer;
-	}
+	constructor(
+		@InjectPinoLogger(PdfService.name) private readonly logger: PinoLogger,
+		@Inject('executor') private readonly executor: ClientProxy,
+	) {}
 
-	async merge(bytes1, bytes2) {
-		return bytes1 + bytes2;
-	}
+	async removePage(
+		filename: string,
+		bytes: Uint8Array,
+		pagesToRemove: number[],
+	) {
+		const data = new RemovePagesDto();
 
-	async split(bytes: Uint8Array, page: number) {
-		return bytes;
-	}
+		data.filename = filename;
+		data.pagesToRemove = pagesToRemove;
+		data.bytes = bytes;
 
-	async compress(bytes: Uint8Array) {
-		return bytes;
+		this.logger.info('отправлена задача pdf/page/remove');
+		const url = await firstValueFrom(
+			this.executor.send('pdf/page/remove', data),
+		);
+		this.logger.info(`Получена ссылка на скачивание: ${url}`);
+		return url;
 	}
 }
