@@ -29,27 +29,31 @@ transforms:
       }
 
 
-
+  frontend_filter:
+    type: filter
+    inputs: 
+      - parse_nestjs
+    condition: '.container_name == "app"'
   producer_filter:
     type: filter
     inputs: 
       - parse_nestjs
-    condition: '.container_name == "web-producer"'
+    condition: '.container_name == "backend"'
   executor_filter:
     type: filter
     inputs: 
       - parse_nestjs
-    condition: '.container_name == "src-web-executor-1"'
+    condition: '.container_name == "backend-executor"'
   rabbitmq_filter:
     type: filter
     inputs: 
       - betterstack_transform
-    condition: '.container_name == "rabbitmq-queue"'
+    condition: '.container_name == "queue"'
   minio_filter:
     type: filter
     inputs: 
       - betterstack_transform
-    condition: '.container_name == "minio-filestorage"'
+    condition: '.container_name == "filestorage"'
   nginx_filter:
     type: filter
     inputs: 
@@ -57,6 +61,16 @@ transforms:
     condition: '.container_name == "nginx"'
 
 sinks:
+  frontend_logs:
+    type: http
+    inputs:
+      - frontend_filter
+    uri: ${SINK_URI}
+    encoding:
+      codec: json
+    auth:
+      strategy: bearer
+      token: ${FRONTEND_TOKEN}
   producer_logs:
     type: http
     inputs:

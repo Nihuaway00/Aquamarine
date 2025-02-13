@@ -154,6 +154,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
       - SINK_URI=${SINK_URI}
+      - FRONTEND_TOKEN=${FRONTEND_LOGGER_TOKEN}
       - PRODUCER_TOKEN=${PRODUCER_LOGGER_TOKEN}
       - EXECUTOR_TOKEN=${EXECUTOR_LOGGER_TOKEN}
       - RABBITMQ_TOKEN=${RABBITMQ_LOGGER_TOKEN}
