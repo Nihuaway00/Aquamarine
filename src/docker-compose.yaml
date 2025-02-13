@@ -83,9 +83,6 @@ services:
       - MINIO_PORT=9000
     deploy:
       replicas: 1
-      resources:
-        limits:
-          memory: 100M
     depends_on:
       rabbitmq:
           condition: service_healthy
