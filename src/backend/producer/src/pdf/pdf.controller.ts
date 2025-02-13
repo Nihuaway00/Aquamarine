@@ -35,6 +35,11 @@ export class PdfController {
 				.addFileTypeValidator({
 					fileType: 'application/pdf',
 				})
+				.addMaxSizeValidator({
+					maxSize: 3 * 1024 * 1024,
+					message: (maxSize) =>
+						`Файл должен быть меньше ${maxSize / 1024 / 1024} мБайт`,
+				})
 				.build({
 					fileIsRequired: true,
 				}),

@@ -22,10 +22,11 @@ export class PdfService {
 		data.pagesToRemove = pagesToRemove;
 		data.bytes = bytes;
 
-		this.logger.info('отправлена задача pdf/page/remove');
-		const url = await firstValueFrom(
-			this.executor.send('pdf/page/remove', data),
+		const observable = this.executor.send('pdf/page/remove', data);
+		this.logger.info(
+			`отправлена задача pdf/page/remove : filename${data.filename}, pagesToRemove: ${data.pagesToRemove}, bytes: ${data.bytes.slice(0, 10)}`,
 		);
+		const url = await firstValueFrom(observable);
 		this.logger.info(`Получена ссылка на скачивание: ${url}`);
 		return url;
 	}
