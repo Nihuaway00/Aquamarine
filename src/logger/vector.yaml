@@ -43,7 +43,7 @@ transforms:
     type: filter
     inputs: 
       - parse_nestjs
-    condition: '.container_name == "backend-executor"'
+    condition: '.container_name == "src-backend-executor-1"'
   rabbitmq_filter:
     type: filter
     inputs: 
