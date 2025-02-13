@@ -89,7 +89,7 @@ describe('PdfController', () => {
 		});
 	});
 
-	it('успешное удаление страницы', async () => {
+	it('успешное удаление страницы', (done) => {
 		const host = 'localhost';
 		const protocol = 'http';
 		const body = {
@@ -114,18 +114,17 @@ describe('PdfController', () => {
 		data.pagesToRemove = [1, 2, 3];
 		data.bytes = file.buffer;
 
-		await pdfController.removePages(host, protocol, body, file);
+		// сервис не получит ответа, поэтому не ждем выполнения функции
+		pdfController.removePages(host, protocol, body, file);
 
-		new Promise((resolve) => {
-			channel.consume(
-				QUEUE,
-				(message) => {
-					const pattern = JSON.parse(message?.content.toString()).pattern;
-					expect(pattern).not.toBeNull();
-					resolve(true);
-				},
-				{ noAck: true },
-			);
-		});
-	}, 30_000);
+		channel.consume(
+			QUEUE,
+			(message) => {
+				const pattern = JSON.parse(message?.content.toString()).pattern;
+				expect(pattern).not.toBeNull();
+				done();
+			},
+			{ noAck: true },
+		);
+	});
 });
